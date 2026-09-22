@@ -22,6 +22,8 @@ public class ChatMessage {
 //    @JoinColumn(name = "sessionId")
 //    ChatSession chatSession;
     @Column(nullable = false)
+    Long sessionId;
+    @Column(nullable = false)
     String sender;
     @Column(columnDefinition = "TEXT", nullable = false)
     String content;

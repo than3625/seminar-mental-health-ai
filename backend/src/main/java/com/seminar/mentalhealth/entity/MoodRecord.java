@@ -22,6 +22,8 @@ public class MoodRecord {
 //    @JoinColumn(name = "userId", nullable = false, unique = true)
 //    User userId;
     @Column(nullable = false)
+    Long userId;
+    @Column(nullable = false)
     String moodLabel;
     @Column(nullable = false)
     Integer score;
