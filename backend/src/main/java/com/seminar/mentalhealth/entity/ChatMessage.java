@@ -18,11 +18,9 @@ public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long messageId;
-//    @OneToOne (fetch = FetchType.LAZY)
-//    @JoinColumn(name = "sessionId")
-//    ChatSession chatSession;
-    @Column(nullable = false)
-    Long sessionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sessionId", nullable = false)
+    ChatSession session;
     @Column(nullable = false)
     String sender;
     @Column(columnDefinition = "TEXT", nullable = false)

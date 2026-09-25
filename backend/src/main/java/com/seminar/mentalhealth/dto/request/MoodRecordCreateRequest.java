@@ -1,5 +1,6 @@
 package com.seminar.mentalhealth.dto.request;
 
+import com.seminar.mentalhealth.entity.User;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

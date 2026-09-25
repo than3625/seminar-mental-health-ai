@@ -4,6 +4,7 @@ import com.seminar.mentalhealth.dto.request.JournalCreateRequest;
 import com.seminar.mentalhealth.dto.request.JournalUpdateRequest;
 import com.seminar.mentalhealth.entity.Journal;
 import com.seminar.mentalhealth.entity.MoodRecord;
+import com.seminar.mentalhealth.entity.User;
 import com.seminar.mentalhealth.exception.AppException;
 import com.seminar.mentalhealth.exception.ErrorCode;
 import com.seminar.mentalhealth.repository.JournalRepository;
@@ -44,7 +45,7 @@ public class JournalService {
     }
 
     public List<Journal> getJournalByUser(Long userId){
-        return journalRepository.findByMoodRecord_UserIdOrderByCreatedAtDesc(userId);
+        return journalRepository.findByMoodRecord_User_UserIdOrderByCreatedAtDesc(userId);
     }
 
     public Journal updateJournal(Long journalId, JournalUpdateRequest request){

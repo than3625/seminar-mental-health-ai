@@ -1,6 +1,7 @@
 package com.seminar.mentalhealth.service;
 
 import com.seminar.mentalhealth.entity.ChatMessage;
+import com.seminar.mentalhealth.entity.ChatSession;
 import com.seminar.mentalhealth.repository.ChatMessageRepository;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
@@ -24,7 +25,7 @@ public class ChatStreamService {
     StreamingChatModel streamingChatModel;
 
     public SseEmitter streamChatResponse(
-            Long sessionId,
+            ChatSession session,
             String userPrompt
     ) {
 
@@ -32,7 +33,7 @@ public class ChatStreamService {
 
         // 1. Lưu message của USER
         ChatMessage userMessage = ChatMessage.builder()
-                .sessionId(sessionId)
+                .session(session)
                 .sender("USER")
                 .content(userPrompt)
                 .createdAt(LocalDateTime.now())
@@ -75,7 +76,7 @@ public class ChatStreamService {
                         // 4. Lưu toàn bộ response của AI
                         ChatMessage assistantMessage =
                                 ChatMessage.builder()
-                                        .sessionId(sessionId)
+                                        .session(session)
                                         .sender("ASSISTANT")
                                         .content(fullResponse.toString())
                                         .createdAt(LocalDateTime.now())

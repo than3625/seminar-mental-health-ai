@@ -1,6 +1,7 @@
 package com.seminar.mentalhealth.controller;
 
 import com.seminar.mentalhealth.dto.request.ChatStreamRequest;
+import com.seminar.mentalhealth.entity.ChatSession;
 import com.seminar.mentalhealth.service.ChatStreamService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -17,7 +18,7 @@ public class ChatStreamController {
     ChatStreamService chatStreamService;
 
     @PostMapping("/sessions/{sessionId}/stream")
-    public SseEmitter streamChat(@PathVariable Long sessionId,@Valid @RequestBody ChatStreamRequest request){
-        return chatStreamService.streamChatResponse(sessionId, request.getMessage());
+    public SseEmitter streamChat(@PathVariable ChatSession session, @Valid @RequestBody ChatStreamRequest request){
+        return chatStreamService.streamChatResponse(session, request.getMessage());
     }
 }

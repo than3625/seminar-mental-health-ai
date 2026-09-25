@@ -18,11 +18,9 @@ public class MoodRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long recordId;
-//    @OneToOne (fetch = FetchType.LAZY)
-//    @JoinColumn(name = "userId", nullable = false, unique = true)
-//    User userId;
-    @Column(nullable = false)
-    Long userId;
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", nullable = false)
+    User user;
     @Column(nullable = false)
     String moodLabel;
     @Column(nullable = false)
