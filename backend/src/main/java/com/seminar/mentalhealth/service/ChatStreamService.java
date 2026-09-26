@@ -2,7 +2,10 @@ package com.seminar.mentalhealth.service;
 
 import com.seminar.mentalhealth.entity.ChatMessage;
 import com.seminar.mentalhealth.entity.ChatSession;
+import com.seminar.mentalhealth.exception.AppException;
+import com.seminar.mentalhealth.exception.ErrorCode;
 import com.seminar.mentalhealth.repository.ChatMessageRepository;
+import com.seminar.mentalhealth.repository.ChatSessionRepository;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
@@ -21,13 +24,15 @@ import java.time.LocalDateTime;
 public class ChatStreamService {
 
     ChatMessageRepository chatMessageRepository;
-
+    ChatSessionRepository chatSessionRepository;
     StreamingChatModel streamingChatModel;
 
     public SseEmitter streamChatResponse(
-            ChatSession session,
+            Long sessionId,
             String userPrompt
     ) {
+        ChatSession session = chatSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHAT_SESSION_NOT_FOUND));
 
         SseEmitter emitter = new SseEmitter(180_000L);
 

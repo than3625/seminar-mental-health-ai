@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -27,6 +28,13 @@ public class JournalService {
     public Journal createJournal (JournalCreateRequest request){
         MoodRecord moodRecord = moodRecordRepository.findById(request.getRecordId())
                 .orElseThrow(() -> new AppException(ErrorCode.MOOD_RECORD_NOT_FOUND));
+
+        // Đặt title mặc định nếu người dùng hong nhập
+        LocalDateTime now = LocalDateTime.now();
+        if(request.getTitle() == null||request.getTitle().trim().isEmpty()){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            request.setTitle("Nhật ký ngày " + now.format(formatter));
+        }
 
         Journal journal = Journal.builder()
                 .moodRecord(moodRecord)

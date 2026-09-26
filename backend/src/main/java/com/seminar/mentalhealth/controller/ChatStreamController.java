@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/api/chat")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ChatStreamController {
     ChatStreamService chatStreamService;
 
     @PostMapping("/sessions/{sessionId}/stream")
-    public SseEmitter streamChat(@PathVariable ChatSession session, @Valid @RequestBody ChatStreamRequest request){
-        return chatStreamService.streamChatResponse(session, request.getMessage());
+    public SseEmitter streamChat(@PathVariable Long sessionId, @Valid @RequestBody ChatStreamRequest request){
+        return chatStreamService.streamChatResponse(sessionId, request.getMessage());
     }
 }
