@@ -1,5 +1,6 @@
 package com.seminar.mentalhealth.config;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +34,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
+                        // 1. Cho phép các luồng Async nội bộ (SseEmitter) được hoàn tất mà không cần check lại token
+                        .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
+                        // 2. Cho phép Spring forward đến trang /error nội bộ nếu cần thiết
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

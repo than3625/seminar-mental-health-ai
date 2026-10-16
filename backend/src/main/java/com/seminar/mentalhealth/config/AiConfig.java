@@ -30,6 +30,9 @@ public class AiConfig {
                 .baseUrl(baseUrl)
                 .modelName(modelName)
                 .temperature(temperature)
+                .think(false)
+                .logRequests(true)
+                .logResponses(true)
                 .timeout(timeout)
                 .build();
 
@@ -40,6 +43,7 @@ public class AiConfig {
                 .baseUrl(baseUrl)
                 .modelName(modelName)
                 .temperature(temperature)
+                .think(false)
                 .timeout(timeout)
                 .build();
 
