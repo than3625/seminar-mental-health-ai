@@ -2,7 +2,9 @@ package com.seminar.mentalhealth.config;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
+import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
+import dev.langchain4j.model.ollama.OllamaEmbeddingModel;
 import dev.langchain4j.model.ollama.OllamaStreamingChatModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +25,15 @@ public class AiConfig {
 
     @Value("${langchain4j.ollama.chat-model.timeout}")
     private Duration timeout;
+
+    @Value("${langchain4j.ollama.embedding-model.base-url}")
+    private String embeddingBaseUrl;
+
+    @Value("${langchain4j.ollama.embedding-model.model-name}")
+    private String embeddingModelName;
+
+    @Value("${langchain4j.ollama.embedding-model.timeout")
+    private Duration embeddingTimeout;
 
     @Bean
     public ChatModel chatModel(){
@@ -47,5 +58,13 @@ public class AiConfig {
                 .timeout(timeout)
                 .build();
 
+    }
+    @Bean
+    public EmbeddingModel embeddingModel(){
+        return OllamaEmbeddingModel.builder()
+                .baseUrl(embeddingBaseUrl)
+                .modelName(embeddingModelName)
+                .timeout(embeddingTimeout)
+                .build();
     }
 }
