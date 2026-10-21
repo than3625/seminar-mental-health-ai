@@ -1,0 +1,7 @@
+source_id,file_name,status,page_count,char_count,contains_foreign_contacts,output_file
+who_pfa,who_psychological_first_aid.pdf,success,64,90978,False,C:\Users\PC\OneDrive\Máy tính\seminar-mental-health-ai\rag_pipeline\processed_documents\who_psychological_first_aid.txt
+apa_stress,apa_manage_stress_tips.pdf,success,1,864,False,C:\Users\PC\OneDrive\Máy tính\seminar-mental-health-ai\rag_pipeline\processed_documents\apa_manage_stress_tips.txt
+nimh_stress,nimh_im_so_stressed_out.html,success,,3960,False,C:\Users\PC\OneDrive\Máy tính\seminar-mental-health-ai\rag_pipeline\processed_documents\nimh_im_so_stressed_out.txt
+apa_listening,apa_support_as_healing.pdf,success,2,3507,False,C:\Users\PC\OneDrive\Máy tính\seminar-mental-health-ai\rag_pipeline\processed_documents\apa_support_as_healing.txt
+apa_crisis,apa_emotional_crisis.html,success,,5395,False,C:\Users\PC\OneDrive\Máy tính\seminar-mental-health-ai\rag_pipeline\processed_documents\apa_emotional_crisis.txt
+apa_healthy_ways,apa_11_healthy_ways_to_handle_lifes_stressors.html,success,,3884,False,C:\Users\PC\OneDrive\Máy tính\seminar-mental-health-ai\rag_pipeline\processed_documents\apa_11_healthy_ways_to_handle_lifes_stressors.txt

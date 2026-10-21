@@ -132,7 +132,6 @@ public class ChatStreamService {
                         emitter.completeWithError(error);
                     }
                 };
-
 //        String systemPrompt = "Bạn là một người bạn lắng nghe và hỗ trợ cảm xúc, tên là Mind Context. " +
 //                "Quy tắc tuyệt đối: Bạn KHÔNG PHẢI là bác sĩ hay chuyên gia y tế. " +
 //                "KHÔNG BAO GIỜ được phép chẩn đoán bệnh tâm lý, tâm thần hay kê đơn thuốc. " +

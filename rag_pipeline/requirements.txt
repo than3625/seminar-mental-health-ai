@@ -1,0 +1,5 @@
+pandas
+requests
+trafilatura
+beautifulsoup4
+pymupdf
