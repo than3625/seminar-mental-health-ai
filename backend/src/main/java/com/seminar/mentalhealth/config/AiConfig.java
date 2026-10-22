@@ -1,12 +1,17 @@
 package com.seminar.mentalhealth.config;
 
+import com.seminar.mentalhealth.service.DocumentIngestionService;
+import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.ollama.OllamaEmbeddingModel;
 import dev.langchain4j.model.ollama.OllamaStreamingChatModel;
+import dev.langchain4j.store.embedding.EmbeddingStore;
+import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,15 +30,6 @@ public class AiConfig {
 
     @Value("${langchain4j.ollama.chat-model.timeout}")
     private Duration timeout;
-
-    @Value("${langchain4j.ollama.embedding-model.base-url}")
-    private String embeddingBaseUrl;
-
-    @Value("${langchain4j.ollama.embedding-model.model-name}")
-    private String embeddingModelName;
-
-    @Value("${langchain4j.ollama.embedding-model.timeout")
-    private Duration embeddingTimeout;
 
     @Bean
     public ChatModel chatModel(){
@@ -60,11 +56,30 @@ public class AiConfig {
 
     }
     @Bean
-    public EmbeddingModel embeddingModel(){
-        return OllamaEmbeddingModel.builder()
-                .baseUrl(embeddingBaseUrl)
-                .modelName(embeddingModelName)
-                .timeout(embeddingTimeout)
+    public EmbeddingStore<TextSegment> embeddingStore() {
+        return PgVectorEmbeddingStore.builder()
+                .host("localhost")
+                .port(5433)
+                .database("mentalhealth")
+                .user("postgres")
+                .password("123")
+                .table("mental_health_documents")
+                .dimension(1024)
+                .createTable(true)
+                .dropTableFirst(false)
                 .build();
+    }
+
+    @Bean
+    public CommandLineRunner testInternalIngestion(DocumentIngestionService ingestionService) {
+        return args -> {
+            System.out.println("\n === BẮT ĐẦU TEST NẠP TÀI LIỆU NỘI BỘ ===");
+            try {
+                ingestionService.ingestProcessedDocuments();
+            } catch (Exception e) {
+                System.err.println("Lỗi khi nạp: " + e.getMessage());
+            }
+            System.out.println("============================================\n");
+        };
     }
 }
