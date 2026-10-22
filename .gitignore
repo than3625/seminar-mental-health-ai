@@ -32,3 +32,9 @@
 
 # Environment / sensitive config
 .env
+
+# Môi trường ảo Python
+.venv/
+*/.venv/
+venv/
+__pycache__/
