@@ -6,9 +6,17 @@ import com.seminar.mentalhealth.exception.AppException;
 import com.seminar.mentalhealth.exception.ErrorCode;
 import com.seminar.mentalhealth.repository.ChatMessageRepository;
 import com.seminar.mentalhealth.repository.ChatSessionRepository;
+import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
+import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.model.input.Prompt;
+import dev.langchain4j.model.input.PromptTemplate;
+import dev.langchain4j.store.embedding.EmbeddingMatch;
+import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
+import dev.langchain4j.store.embedding.EmbeddingStore;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -18,11 +26,15 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
+
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,6 +45,9 @@ public class ChatStreamService {
     ChatMessageRepository chatMessageRepository;
     ChatSessionRepository chatSessionRepository;
     StreamingChatModel streamingChatModel;
+
+    EmbeddingModel embeddingModel;
+    EmbeddingStore<TextSegment> embeddingStore;
 
     public SseEmitter streamChatResponse(
             Long sessionId,
@@ -53,11 +68,92 @@ public class ChatStreamService {
 
         chatMessageRepository.save(userMessage);
 
-        // 2. Gom toàn bộ response của AI
-        StringBuilder fullResponse = new StringBuilder();
-
         long startTime = System.currentTimeMillis();
+
+        // Tìm tài liệu
+        log.info("Nhúng câu hỏi và tiìm kiếm tài liệu");
+        // Lấy câu hỏi của user chuyển thành vector
+        Embedding queryEmbedding = embeddingModel.embed(userPrompt).content();
+
+        // Truy vấn tối đa 3 đoạn text giống nhất
+        EmbeddingSearchRequest searchRequest = EmbeddingSearchRequest.builder()
+                .queryEmbedding(queryEmbedding)
+                .maxResults(3)
+                .build();
+
+        List<EmbeddingMatch<TextSegment>> matches = embeddingStore.search(searchRequest).matches();
+
+//        String retrievedContext = matches.stream()
+//                .map(match -> match.embedded().text())
+//                .collect(Collectors.joining("\n\n---\n\n"));
+//        log.info("Tìm thấy {} đoạn tài liệu liên quan", matches.size());
+
+        StringBuilder contextBuilder = new StringBuilder();
+        for (int i = 0; i < matches.size(); i++) {
+            var match = matches.get(i);
+            var metadata = match.embedded().metadata();
+
+            String title = metadata.getString("title") != null ? metadata.getString("title") : "Tài liệu chuyên môn";
+            String publisher = metadata.getString("publisher") != null ? metadata.getString("publisher") : "Nguồn uy tín";
+            String url = metadata.getString("url") != null ? metadata.getString("url") : "";
+            contextBuilder.append(String.format("[Tài liệu %d]\n", i + 1));
+            contextBuilder.append(String.format("- Tiêu đề: %s\n", title));
+            contextBuilder.append(String.format("- Tác giả/Tổ chức: %s\n", publisher));
+            contextBuilder.append(String.format("- URL: %s\n", url));
+            contextBuilder.append(String.format("- Nội dung: %s\n\n", match.embedded().text()));
+
+            String text = match.embedded().text();
+            String previewText = text.length() > 150 ? text.substring(0, 150) + "..." : text;
+            log.info("--- TÀI LIỆU {} (Độ khớp: {}) ---", i + 1, match.score());
+            log.info("Nguồn file: {}", metadata.getString("file_name"));
+            log.info("Chủ đề: {}", metadata.getString("topic"));
+            log.info("Trích đoạn: {}", previewText.replace("\n", " "));
+        }
+        String retrievedContext = contextBuilder.toString();
+
+        String templateString =
+                "Dựa vào các tài liệu chuyên môn sau đây:\n" +
+                "{{context}}\n\n" +
+                "Câu hỏi/Chia sẻ của người dùng: {{question}}\n\n" +
+                "HƯỚNG DẪN TRẢ LỜI:\n" +
+                "1. Hãy đóng vai một người bạn đồng cảm, đưa ra lời khuyên nhẹ nhàng, ấm áp dựa trên kiến thức từ tài liệu.\n" +
+                "2. KHÔNG chèn tên file hay tên tài liệu trực tiếp vào trong thân bài viết.\n" +
+                "3. Ở CUỐI CÙNG của câu trả lời, nếu có sử dụng kiến thức từ tài liệu trên, hãy tự động thêm một phần nhỏ liệt kê nguồn ngắn gọn theo định dạng sau:\n" +
+                "   ---\n" +
+                "   *Gợi ý dựa trên tài liệu tham khảo:* [Tên bài viết/Tiêu đề] - [Tác giả/Tổ chức]\n";
+        PromptTemplate promptTemplate = PromptTemplate.from(templateString);
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("context", retrievedContext.isEmpty() ? "Không tìm thấy tài liệu cụ thể" : retrievedContext);
+        variables.put("question", userPrompt);
+
+        Prompt augmentedPrompt = promptTemplate.apply(variables);
+        String finalPromptToSend = augmentedPrompt.text();
+
+        String systemPrompt =
+                "Bạn là một người bạn lắng nghe và hỗ trợ cảm xúc. "
+                        + "Bạn không phải là bác sĩ hay chuyên gia y tế. "
+                        + "Không được chẩn đoán bệnh tâm lý hoặc tâm thần và không được kê đơn thuốc. "
+
+                        + "Hãy luôn bám sát nội dung người dùng vừa nói và không tự suy đoán "
+                        + "cảm xúc, hoàn cảnh hoặc vấn đề của người dùng khi họ chưa đề cập. "
+
+                        + "Nếu người dùng chia sẻ điều tích cực, hãy phản hồi phù hợp với điều tích cực đó. "
+                        + "Nếu người dùng đang buồn, lo lắng hoặc gặp khó khăn, hãy lắng nghe, "
+                        + "thể hiện sự đồng cảm và hỗ trợ phù hợp. "
+
+                        + "Nếu người dùng chỉ muốn trò chuyện, hãy trò chuyện tự nhiên và không biến "
+                        + "mọi cuộc trò chuyện thành tư vấn tâm lý. "
+
+                        + "Nếu người dùng có dấu hiệu tự hại hoặc có ý định tự tử, hãy ưu tiên an toàn, "
+                        + "khuyến khích họ tìm kiếm sự giúp đỡ từ người đáng tin cậy, chuyên gia y tế "
+                        + "hoặc dịch vụ hỗ trợ khẩn cấp phù hợp. "
+
+                        + "Luôn trả lời bằng tiếng Việt, ngắn gọn, tự nhiên và đồng cảm.";
+
+        // Gom toàn bộ response của AI
+        StringBuilder fullResponse = new StringBuilder();
         AtomicBoolean isFirstToken = new AtomicBoolean(true);
+
         // 3. Tạo callback handler
         StreamingChatResponseHandler handler =
                 new StreamingChatResponseHandler() {
@@ -111,7 +207,7 @@ public class ChatStreamService {
                             log.info("\uD83D\uDCCA Token Usage cho session {} -> Input: {}, Output: {}, Total: {}",
                                     sessionId, inputTokens, outputTokens, totalTokens);
 
-                            // (Tùy chọn) Nếu bà muốn gửi số token này về cho script Python để lưu Excel:
+
                              try {
                                  String tokenData = String.format("{\"input\": %d, \"output\": %d, \"total\": %d}",
                                                                  inputTokens, outputTokens, totalTokens);
@@ -132,44 +228,14 @@ public class ChatStreamService {
                         emitter.completeWithError(error);
                     }
                 };
-//        String systemPrompt = "Bạn là một người bạn lắng nghe và hỗ trợ cảm xúc, tên là Mind Context. " +
-//                "Quy tắc tuyệt đối: Bạn KHÔNG PHẢI là bác sĩ hay chuyên gia y tế. " +
-//                "KHÔNG BAO GIỜ được phép chẩn đoán bệnh tâm lý, tâm thần hay kê đơn thuốc. " +
-//                "Nếu người dùng có dấu hiệu tự hại, muốn tự tử hoặc cần can thiệp y tế, " +
-//                "hãy khuyên họ tìm đến bác sĩ chuyên khoa hoặc gọi ngay đường dây nóng 111. " +
-//                "Luôn trả lời bằng tiếng Việt, ngắn gọn, ấm áp và thể hiện sự đồng cảm sâu sắc.";
 
-        String systemPrompt =
-                "Bạn là một người bạn lắng nghe và hỗ trợ cảm xúc. "
-                        + "Bạn không phải là bác sĩ hay chuyên gia y tế. "
-                        + "Không được chẩn đoán bệnh tâm lý hoặc tâm thần và không được kê đơn thuốc. "
-
-                        + "Hãy luôn bám sát nội dung người dùng vừa nói và không tự suy đoán "
-                        + "cảm xúc, hoàn cảnh hoặc vấn đề của người dùng khi họ chưa đề cập. "
-
-                        + "Nếu người dùng chia sẻ điều tích cực, hãy phản hồi phù hợp với điều tích cực đó. "
-                        + "Nếu người dùng đang buồn, lo lắng hoặc gặp khó khăn, hãy lắng nghe, "
-                        + "thể hiện sự đồng cảm và hỗ trợ phù hợp. "
-
-                        + "Nếu người dùng chỉ muốn trò chuyện, hãy trò chuyện tự nhiên và không biến "
-                        + "mọi cuộc trò chuyện thành tư vấn tâm lý. "
-
-                        + "Nếu người dùng có dấu hiệu tự hại hoặc có ý định tự tử, hãy ưu tiên an toàn, "
-                        + "khuyến khích họ tìm kiếm sự giúp đỡ từ người đáng tin cậy, chuyên gia y tế "
-                        + "hoặc dịch vụ hỗ trợ khẩn cấp phù hợp. "
-
-                        + "Luôn trả lời bằng tiếng Việt, ngắn gọn, tự nhiên và đồng cảm.";
-        // 6. Chỉ gửi current input → LLM
         streamingChatModel.chat(
-                //userPrompt,
                 List.of(
                         SystemMessage.from(systemPrompt),
-                        UserMessage.from(userPrompt)
+                        UserMessage.from(finalPromptToSend)
                 ),
                 handler
         );
-
-        // 7. Xử lý timeout
         emitter.onTimeout(emitter::complete);
 
         return emitter;

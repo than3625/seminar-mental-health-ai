@@ -70,16 +70,16 @@ public class AiConfig {
                 .build();
     }
 
-    @Bean
-    public CommandLineRunner testInternalIngestion(DocumentIngestionService ingestionService) {
-        return args -> {
-            System.out.println("\n === BẮT ĐẦU TEST NẠP TÀI LIỆU NỘI BỘ ===");
-            try {
-                ingestionService.ingestProcessedDocuments();
-            } catch (Exception e) {
-                System.err.println("Lỗi khi nạp: " + e.getMessage());
-            }
-            System.out.println("============================================\n");
-        };
-    }
+//    @Bean
+//    public CommandLineRunner testInternalIngestion(DocumentIngestionService ingestionService) {
+//        return args -> {
+//            System.out.println("\n === BẮT ĐẦU TEST NẠP TÀI LIỆU NỘI BỘ ===");
+//            try {
+//                ingestionService.ingestProcessedDocuments();
+//            } catch (Exception e) {
+//                System.err.println("Lỗi khi nạp: " + e.getMessage());
+//            }
+//            System.out.println("============================================\n");
+//        };
+//    }
 }
