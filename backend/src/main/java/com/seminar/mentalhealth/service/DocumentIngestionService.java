@@ -11,6 +11,7 @@ import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,18 +30,20 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class DocumentIngestionService {
-    EmbeddingModel embeddingModel;
-    EmbeddingStore<TextSegment> embeddingStore;
+    final EmbeddingModel embeddingModel;
+    final EmbeddingStore<TextSegment> embeddingStore;
 
-    String RAG_PIPELINE_PATH = "C:/Users/ASUS/Desktop/mentalhealth/rag_pipeline";
+    @Value("${rag.pipeline.path:../rag_pipeline}")
+    private String ragPipelinePath;
 
     public void ingestProcessedDocuments() {
         System.out.println("Bắt đầu nạp tài liệu từ thư mục processed_documents...");
 
-        File processedDir = new File(RAG_PIPELINE_PATH + "/processed_documents");
-        File metadataCsv = new File(RAG_PIPELINE_PATH + "/raw_documents/metadata.csv");
+        Path basePipelineDir = Paths.get(ragPipelinePath).toAbsolutePath().normalize();
+        File processedDir = basePipelineDir.resolve("processed_documents").toFile();
+        File metadataCsv = basePipelineDir.resolve("raw_documents").resolve("metadata.csv").toFile();
 
         // 1. Đọc toàn bộ cấu hình từ metadata.csv vào bộ nhớ
         Map<String, Map<String, String>> metadataMap = loadCsvMetadata(metadataCsv);
@@ -80,21 +83,23 @@ public class DocumentIngestionService {
     private Map<String, Map<String, String>> loadCsvMetadata(File csvFile) {
         Map<String, Map<String, String>> map = new HashMap<>();
 
+        if (!csvFile.exists()) {
+            System.err.println("Cảnh báo: Không tìm thấy file metadata.csv tại " + csvFile.getAbsolutePath());
+            return map;
+        }
+
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             String headerLine = br.readLine();
             if (headerLine == null) return map;
 
-            // Lấy danh sách tên cột
             String[] headers = headerLine.split(",");
 
             String line;
             while ((line = br.readLine()) != null) {
-                // Tách các giá trị bằng dấu phẩy
                 String[] values = line.split(",", -1);
                 Map<String, String> rowMeta = new HashMap<>();
                 String originalFileName = "";
 
-                // Gắn từng giá trị vào đúng tên cột
                 for (int i = 0; i < headers.length; i++) {
                     if (i < values.length) {
                         String key = headers[i].trim();
@@ -107,7 +112,6 @@ public class DocumentIngestionService {
                     }
                 }
 
-                // Xử lý logic chuyển đổi tên file (.pdf, .html -> .txt)
                 if (!originalFileName.isEmpty() && originalFileName.contains(".")) {
                     String processedFileName = originalFileName.substring(0, originalFileName.lastIndexOf('.')) + ".txt";
                     map.put(processedFileName, rowMeta);
@@ -119,71 +123,6 @@ public class DocumentIngestionService {
         return map;
     }
 
-//    public void ingestDocuments() {
-//        System.out.println("Bắt đầu nạp tài liệu vào Vector DB...");
-//
-//        // 1. Đọc file .txt từ thư mục
-//        Path documentPath = Paths.get("C:/Users/ASUS/Desktop/mentalhealth/documents/tailieu.txt");
-//        Document document = FileSystemDocumentLoader.loadDocument(documentPath);
-//
-//        // 2. Tạo máy cắt: Mỗi đoạn tối đa 500 token, gối lên nhau (overlap) 50 token để không mất ngữ nghĩa
-//        DocumentSplitter documentSplitter = DocumentSplitters.recursive(500, 50);
-//
-//        // 3. Nạp vào kho
-//        EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
-//                .documentSplitter(documentSplitter)
-//                .embeddingModel(embeddingModel)
-//                .embeddingStore(embeddingStore)
-//                .build();
-//
-//        ingestor.ingest(document);
-//
-//        System.out.println("Nạp tài liệu thành công! Kho đã sẵn sàng.");
-//    }
-//
-//    public void ingestAllDocuments() {
-//        System.out.println("Bắt đầu quét và nạp tài liệu tự động");
-//
-//        // Đường dẫn tới thư mục gốc chứa các chủ đề
-//        File rootDir = new File("C:/Users/ASUS/Desktop/documents");
-//
-//        // Cấu hình chunk
-//        DocumentSplitter documentSplitter = DocumentSplitters.recursive(500, 50);
-//
-//        // Cấu hình máy nạp
-//        EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
-//                .documentSplitter(documentSplitter)
-//                .embeddingModel(embeddingModel)
-//                .embeddingStore(embeddingStore)
-//                .build();
-//
-//        // Quét qua từng thư mục chủ đề
-//        if (rootDir.listFiles() != null) {
-//            for (File categoryFolder : rootDir.listFiles()) {
-//                if (categoryFolder.isDirectory()) {
-//                    String topicName = categoryFolder.getName();
-//
-//                    // Quét từng file trong thư mục
-//                    for (File file : categoryFolder.listFiles()) {
-//                        if (file.isFile()) {
-//                            // Load file lên
-//                            Document document = FileSystemDocumentLoader.loadDocument(file.toPath());
-//
-//                            // Dán nhãn metadata cho toàn bộ file này
-//                            document.metadata().put("topic", topicName);
-//                            document.metadata().put("source_file", file.getName());
-//
-//                            // Đẩy vào kho. Máy nạp sẽ tự động chép các nhãn này xuống từng đoạn chunk nhỏ
-//                            ingestor.ingest(document);
-//                            System.out.println("Đã nạp xong file: " + file.getName() + " (Chủ đề: " + topicName + ")");
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        System.out.println("Hoàn tất nạp toàn bộ tài liệu vào Vector DB");
-//    }
-
     public void ingestUploadedDocument(MultipartFile file, String title, String publisher, String url,
                                        String language, String docType, String topic,
                                        String recLevel, String accessedAt) throws Exception {
@@ -191,25 +130,38 @@ public class DocumentIngestionService {
         System.out.println("Đang xử lý file upload từ Admin: " + file.getOriginalFilename());
         String originalFileName = file.getOriginalFilename();
 
+        Path basePipelineDir = Paths.get(ragPipelinePath).toAbsolutePath().normalize();
+
         // 1. Lưu file thô vào thư mục raw_documents
-        Path rawFilePath = Paths.get(RAG_PIPELINE_PATH, "raw_documents", originalFileName);
+        Path rawFilePath = basePipelineDir.resolve("raw_documents").resolve(originalFileName);
         file.transferTo(rawFilePath.toFile());
 
         // 2. Ghi thêm dữ liệu vào metadata.csv
-        Path metadataCsvPath = Paths.get(RAG_PIPELINE_PATH, "raw_documents", "metadata.csv");
+        Path metadataCsvPath = basePipelineDir.resolve("raw_documents").resolve("metadata.csv");
         String sourceId = UUID.randomUUID().toString().substring(0, 8);
 
-        String newCsvLine = String.format("\n%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+        String newCsvLine = String.format("%n%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
                 sourceId, originalFileName, title, publisher, url, language, docType, topic, recLevel, accessedAt);
         Files.write(metadataCsvPath, newCsvLine.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
 
         // 3. Tự động kích hoạt script clean_data.py
         System.out.println("Đang gọi script Python làm sạch dữ liệu...");
-        String pythonExe = RAG_PIPELINE_PATH + "/.venv/Scripts/python.exe";
-        String scriptPath = RAG_PIPELINE_PATH + "/scripts/clean_data.py";
+
+        // Kiểm tra đường dẫn python trên Windows (.venv/Scripts/python.exe) hoặc Linux/Mac (.venv/bin/python)
+        Path pythonExePath = basePipelineDir.resolve(".venv").resolve("Scripts").resolve("python.exe");
+        if (!Files.exists(pythonExePath)) {
+            pythonExePath = basePipelineDir.resolve(".venv").resolve("bin").resolve("python");
+        }
+        String pythonExe = Files.exists(pythonExePath) ? pythonExePath.toString() : "python";
+
+        String scriptPath = basePipelineDir.resolve("scripts").resolve("clean_data.py").toString();
+        if (!Files.exists(Paths.get(scriptPath))) {
+            // Dự phòng trường hợp clean_data.py nằm ngay thư mục gốc rag_pipeline/
+            scriptPath = basePipelineDir.resolve("clean_data.py").toString();
+        }
 
         ProcessBuilder pb = new ProcessBuilder(pythonExe, scriptPath);
-        pb.directory(new File(RAG_PIPELINE_PATH));
+        pb.directory(basePipelineDir.toFile());
         Process process = pb.start();
         int exitCode = process.waitFor();
 
@@ -219,7 +171,7 @@ public class DocumentIngestionService {
 
         // 4. Đọc file .txt đã làm sạch từ processed_documents và nạp vào Vector DB
         String processedFileName = originalFileName.substring(0, originalFileName.lastIndexOf('.')) + ".txt";
-        Path processedFilePath = Paths.get(RAG_PIPELINE_PATH, "processed_documents", processedFileName);
+        Path processedFilePath = basePipelineDir.resolve("processed_documents").resolve(processedFileName);
 
         if (!Files.exists(processedFilePath)) {
             throw new RuntimeException("Không tìm thấy file đã xử lý: " + processedFileName);
@@ -250,5 +202,4 @@ public class DocumentIngestionService {
         ingestor.ingest(document);
         System.out.println("Nạp thành công file vào Vector DB: " + processedFileName);
     }
-
 }
