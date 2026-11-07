@@ -19,8 +19,8 @@ import java.util.Collections;
 public class CustomUserDetailsService  implements UserDetailsService {
     UserRepository userRepository;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng với username: " + username));
+    public UserDetails loadUserByUsername(String loginIdentifier) throws UsernameNotFoundException{
+        User user = userRepository.findByUsernameOrEmail(loginIdentifier, loginIdentifier).orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng với username hoặc email: " + loginIdentifier));
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())

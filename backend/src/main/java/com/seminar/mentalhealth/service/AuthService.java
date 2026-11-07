@@ -47,20 +47,20 @@ public class AuthService {
         return userRepository.save(user);
     }
     public AuthResponse login(LoginRequest request){
-
+        String loginIdentifier = request.getUsername();
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.getUsername(),
+                            loginIdentifier,
                             request.getPassword()
                     )
             );
         } catch (Exception e){
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findByUsernameOrEmail(loginIdentifier, loginIdentifier)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginIdentifier);
         String jwtToken = jwtService.generateToken(userDetails);
 
         return AuthResponse.builder()
