@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 // Import các pages vào đây:
-// import Home from './pages/public/Home';
+import Login from './pages/public/Login';
+import Register from './pages/public/Register';
 // import Dashboard from './pages/admin/Dashboard';
 
 function App() {
@@ -9,8 +10,8 @@ function App() {
             {/* Nơi chứa cấu hình điều hướng */}
             <Routes>
                 {/* Ví dụ các trang sẽ cấu hình ở đây */}
-
-                {/* <Route path="/" element={<Home />} /> */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 {/* <Route path="/admin/dashboard" element={<Dashboard />} /> */}
 
                 {/* Trang tạm thời để test */}

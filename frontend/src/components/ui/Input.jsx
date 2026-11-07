@@ -14,7 +14,7 @@ const Input = forwardRef(({
             {label && (
                 <label
                     htmlFor={id}
-                    className="-mblock mb-1.5 text-sm fontedium text-text-primary"
+                    className="block mb-1.5 text-sm font-medium text-text-primary"
                 >
                     {label}
                 </label>
