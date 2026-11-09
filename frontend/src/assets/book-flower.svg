@@ -1,0 +1,174 @@
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 420 300"
+     width="420" height="300">
+
+    <defs>
+        <style>
+            .line {
+            stroke: #40352F;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            }
+            .leaf { fill: #A9B99B; }
+            .pink { fill: #F3A5B5; }
+            .yellow { fill: #F4D77F; }
+            .purple { fill: #C9C5DC; }
+        </style>
+
+        <!-- Flower -->
+        <g id="flower">
+            <g class="line" fill="#F3A5B5">
+                <ellipse cy="-10" rx="5" ry="10"/>
+                <ellipse cy="-10" rx="5" ry="10" transform="rotate(72)"/>
+                <ellipse cy="-10" rx="5" ry="10" transform="rotate(144)"/>
+                <ellipse cy="-10" rx="5" ry="10" transform="rotate(216)"/>
+                <ellipse cy="-10" rx="5" ry="10" transform="rotate(288)"/>
+            </g>
+            <circle class="line" r="4" fill="#E9C16F"/>
+        </g>
+
+        <!-- Small leaves -->
+        <g id="leaf">
+            <path class="line leaf"
+                  d="M0 0 Q-9 -9 -5 -15 Q4 -12 0 0 Z"/>
+        </g>
+    </defs>
+
+    <!-- Stems -->
+    <g fill="none" class="line">
+        <path d="M208 220 Q190 155 170 93"/>
+        <path d="M208 220 Q208 135 211 65"/>
+        <path d="M210 220 Q233 145 280 100"/>
+        <path d="M198 220 Q150 160 126 130"/>
+        <path d="M220 220 Q270 175 320 155"/>
+        <path d="M190 220 Q110 170 75 180"/>
+        <path d="M225 220 Q295 180 355 190"/>
+        <path d="M210 220 Q205 155 230 115"/>
+    </g>
+
+    <!-- Branch leaves -->
+    <g>
+        <use href="#leaf" transform="translate(177 130) rotate(-35)"/>
+        <use href="#leaf" transform="translate(184 153) rotate(40)"/>
+        <use href="#leaf" transform="translate(195 180) rotate(-30)"/>
+        <use href="#leaf" transform="translate(210 120) rotate(35)"/>
+        <use href="#leaf" transform="translate(209 160) rotate(-35)"/>
+        <use href="#leaf" transform="translate(230 155) rotate(55)"/>
+        <use href="#leaf" transform="translate(250 142) rotate(-40)"/>
+        <use href="#leaf" transform="translate(266 128) rotate(35)"/>
+        <use href="#leaf" transform="translate(147 160) rotate(-45)"/>
+        <use href="#leaf" transform="translate(133 145) rotate(30)"/>
+        <use href="#leaf" transform="translate(112 165) rotate(-40)"/>
+        <use href="#leaf" transform="translate(288 165) rotate(40)"/>
+        <use href="#leaf" transform="translate(309 173) rotate(-35)"/>
+        <use href="#leaf" transform="translate(337 185) rotate(40)"/>
+        <use href="#leaf" transform="translate(95 181) rotate(45)"/>
+        <use href="#leaf" transform="translate(74 190) rotate(-35)"/>
+    </g>
+
+    <!-- Flowers -->
+    <g transform="translate(211 68) scale(1.5)">
+        <use href="#flower"/>
+    </g>
+
+    <g transform="translate(170 96) scale(1.15)"
+       style="color:#F4D77F">
+        <use href="#flower" />
+    </g>
+
+    <g transform="translate(279 105) scale(1.1)">
+        <use href="#flower"/>
+    </g>
+
+    <g transform="translate(231 131) scale(.7)">
+        <use href="#flower"/>
+    </g>
+
+    <g transform="translate(139 145) scale(.65)">
+        <use href="#flower"/>
+    </g>
+
+    <!-- Flower colors -->
+    <g class="line">
+        <path fill="#F4D77F"
+              d="M165 91 Q154 79 161 76 Q170 74 173 88
+         Q182 72 189 81 Q193 91 178 96
+         Q186 105 178 111 Q169 111 169 99
+         Q156 110 151 101 Q149 93 165 91 Z"/>
+        <circle cx="170" cy="94" r="4" fill="#E6B85C"/>
+
+        <path fill="#C9C5DC"
+              d="M132 139 Q123 129 130 125 Q139 123 140 135
+         Q151 125 155 132 Q157 140 145 142
+         Q153 152 145 156 Q137 155 137 145
+         Q126 153 122 146 Q120 140 132 139 Z"/>
+        <circle cx="139" cy="141" r="3" fill="#E6B85C"/>
+    </g>
+
+    <!-- Tiny flowers -->
+    <g class="line">
+        <g transform="translate(320 156)">
+            <circle r="5" fill="#F4D77F"/>
+            <path d="M0 -5 Q-8 -14 -3 -16 Q4 -16 3 -6
+               Q12 -11 13 -5 Q13 0 5 2
+               Q10 10 3 11 Q-2 10 -2 4
+               Q-11 10 -12 3 Q-12 -2 -4 -3 Z"
+                  fill="#F4D77F"/>
+        </g>
+        <g transform="translate(103 128) scale(.6)">
+            <use href="#flower"/>
+        </g>
+        <g transform="translate(345 175) scale(.5)">
+            <use href="#flower"/>
+        </g>
+    </g>
+
+    <!-- Small floating dots -->
+    <g fill="#D98D79">
+        <circle cx="151" cy="65" r="2.5"/>
+        <circle cx="159" cy="51" r="2"/>
+        <circle cx="168" cy="43" r="2"/>
+        <circle cx="290" cy="72" r="2.5"/>
+        <circle cx="305" cy="90" r="2"/>
+        <circle cx="115" cy="103" r="2"/>
+        <circle cx="96" cy="115" r="1.8"/>
+    </g>
+
+    <!-- Open book back pages -->
+    <path class="line" fill="#E9D9B9"
+          d="M45 224 Q110 205 205 230
+       Q300 204 375 223
+       L373 236 Q290 220 205 244
+       Q110 220 48 237 Z"/>
+
+    <!-- Left book page -->
+    <path class="line" fill="#FFF5DB"
+          d="M45 222
+       Q115 195 205 226
+       L205 240
+       Q120 212 45 232 Z"/>
+
+    <!-- Right book page -->
+    <path class="line" fill="#FFF5DB"
+          d="M205 226
+       Q295 195 375 222
+       L375 232
+       Q290 212 205 240 Z"/>
+
+    <!-- Page details -->
+    <g fill="none" class="line">
+        <path d="M50 216 Q115 192 205 220"/>
+        <path d="M205 220 Q290 192 370 216"/>
+        <path d="M51 222 Q125 202 205 231"/>
+        <path d="M205 231 Q290 202 369 222"/>
+        <path d="M58 230 Q125 214 198 239"/>
+        <path d="M212 239 Q295 214 363 230"/>
+    </g>
+
+    <!-- Book spine -->
+    <ellipse class="line" cx="205" cy="238"
+             rx="12" ry="6" fill="#D88B9D"/>
+
+</svg>
