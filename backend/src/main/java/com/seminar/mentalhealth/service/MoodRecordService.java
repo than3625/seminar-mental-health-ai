@@ -50,6 +50,7 @@ public class MoodRecordService {
         MoodRecord record = getMoodRecordById(recordId);
         record.setMoodLabel(request.getMoodLabel());
         record.setScore(request.getScore());
+        record.setUpdatedAt(LocalDateTime.now());
         return moodRecordRepository.save(record);
     }
 }

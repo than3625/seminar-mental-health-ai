@@ -26,6 +26,8 @@ const JournalEditor = () => {
     const [tags, setTags] = useState([]);
     const [tagInput, setTagInput] = useState('');
 
+    const [currentRecordId, setCurrentRecordId] = useState(null);
+
     const [isSaving, setIsSaving] = useState(false);
     const [isLoadingData, setIsLoadingData] = useState(false);
 
@@ -50,6 +52,9 @@ const JournalEditor = () => {
                     setContent(data?.content || '');
                     // Backend cần trả về các trường này để bind vào UI
                     setSelectedMood(data.moodRecord?.moodLabel?.toLowerCase() || 'calm');
+                    setIntensity(data.moodRecord?.score || 6);
+                    setCurrentRecordId(data.moodRecord?.recordId || null);
+
                     setTags(data.tags || []);
                 } catch (error) {
                     console.error("Lỗi lấy chi tiết bài viết:", error);
@@ -86,6 +91,13 @@ const JournalEditor = () => {
 
         try {
             if (id) {
+                if (currentRecordId) {
+                    const moodUpdatePayload = {
+                        moodLabel: selectedMood,
+                        score: parseInt(intensity)
+                    };
+                    await journalService.updateMoodRecord(currentRecordId, moodUpdatePayload);
+                }
                 const payload = {
                     title: title.trim(),
                     content: content.trim()
@@ -186,7 +198,11 @@ const JournalEditor = () => {
                             min="1" max="10"
                             value={intensity}
                             onChange={(e) => setIntensity(e.target.value)}
-                            className="w-full accent-primary h-2 bg-surface-secondary rounded-lg appearance-none cursor-pointer"
+                            className="w-full accent-primary h-2 rounded-lg appearance-none cursor-pointer"
+                            style={{
+                                // Tính toán % để tô màu xanh (#829B75) từ trái sang phải, phần còn lại màu nền (#EFE7D6)
+                                background: `linear-gradient(to right, #829B75 ${((intensity - 1) / 9) * 100}%, #EFE7D6 ${((intensity - 1) / 9) * 100}%)`
+                            }}
                         />
                     </div>
 

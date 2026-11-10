@@ -28,5 +28,9 @@ export const journalService = {
 
     createMoodRecord: async (data) => {
         return await apiClient.post('/mood-records', data);
-    }
+    },
+    updateMoodRecord: async (recordId, data) => {
+        return await apiClient.put(`/mood-records/${recordId}`, data);
+    },
+
 };
