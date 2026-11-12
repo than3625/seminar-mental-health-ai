@@ -11,4 +11,6 @@ import lombok.experimental.FieldDefaults;
 public class LoginRequest {
     String username;
     String password;
+    @Builder.Default
+    Boolean rememberMe = false; // mặc định false nếu client không gửi
 }

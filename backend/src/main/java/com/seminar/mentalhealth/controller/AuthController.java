@@ -2,6 +2,7 @@ package com.seminar.mentalhealth.controller;
 
 
 import com.seminar.mentalhealth.dto.request.LoginRequest;
+import com.seminar.mentalhealth.dto.request.RefreshTokenRequest;
 import com.seminar.mentalhealth.dto.request.RegisterRequest;
 import com.seminar.mentalhealth.dto.response.ApiResponse;
 import com.seminar.mentalhealth.dto.response.AuthResponse;
@@ -48,4 +49,11 @@ public class AuthController {
 
     }
 
+    @PostMapping("/refresh")
+    public ApiResponse<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+        AuthResponse response = authService.refreshToken(request.getRefreshToken());
+        return ApiResponse.<AuthResponse>builder()
+                .result(response)
+                .build();
+    }
 }

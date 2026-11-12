@@ -9,7 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthResponse {
-    String token;
+    String token;          // Access Token (dùng gọi API thông thường)
+    String refreshToken;   // Refresh Token (dùng xin cấp lại Access Token khi hết hạn)
     Long userId;
     String username;
     String fullName;

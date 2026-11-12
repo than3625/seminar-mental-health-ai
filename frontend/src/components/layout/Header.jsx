@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import { FiWind } from 'react-icons/fi';
+// import { FiWind } from 'react-icons/fi';
 import Button from "../ui/Button.jsx";
-import bookLogo from "../../assets/book.svg";
+// import bookLogo from "../../assets/book.svg";
 import bookFlower from "../../assets/book-flower.svg"
 
 const Header = () => {

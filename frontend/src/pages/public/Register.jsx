@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiEye, FiEyeOff } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 import api from '../../services/api';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
@@ -8,7 +9,6 @@ import TextLink from '../../components/ui/TextLink';
 
 export default function Register() {
     const navigate = useNavigate();
-    const errorRef = useRef(null); // 1. Con trỏ vị trí thông báo lỗi
 
     const [formData, setFormData] = useState({
         username: '',
@@ -24,7 +24,6 @@ export default function Register() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [loading, setLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -34,20 +33,11 @@ export default function Register() {
         }));
     };
 
-    // Hàm kích hoạt lỗi và tự động cuộn lên vị trí thông báo
-    const triggerError = (msg) => {
-        setErrorMessage(msg);
-        setTimeout(() => {
-            errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 50);
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrorMessage('');
 
         if (formData.password !== formData.confirmPassword) {
-            triggerError('Mật khẩu nhập lại không trùng khớp!');
+            toast.error('Mật khẩu nhập lại không trùng khớp!');
             return;
         }
 
@@ -65,10 +55,11 @@ export default function Register() {
                 password: formData.password,
             });
 
+            toast.success('Tạo tài khoản thành công! Vui lòng đăng nhập.')
             navigate('/login');
         } catch (err) {
             console.error('Register error:', err);
-            triggerError(
+            toast.error(
                 err.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại!'
             );
         } finally {
@@ -106,16 +97,6 @@ export default function Register() {
                         <p className="text-text-secondary text-base mb-6">
                             Chỉ vài bước đơn giản để bắt đầu không gian tĩnh lặng của bạn.
                         </p>
-
-                        {/* Thông báo lỗi có gắn ref để tự động cuộn tới */}
-                        {errorMessage && (
-                            <div
-                                ref={errorRef}
-                                className="mb-5 p-3.5 rounded-button bg-red-50 border border-red-200 text-red-600 text-sm font-medium transition-all"
-                            >
-                                {errorMessage}
-                            </div>
-                        )}
 
                         <form className="space-y-4" onSubmit={handleSubmit}>
                             {/* Trường Username */}

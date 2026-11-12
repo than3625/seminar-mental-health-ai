@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiEye, FiEyeOff } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 import api from '../../services/api';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
@@ -17,7 +18,6 @@ export default function Login() {
 
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -30,12 +30,12 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setErrorMessage('');
 
         try {
             const res = await api.post('/auth/login', {
                 username: formData.usernameOrEmail.trim(),
                 password: formData.password,
+                rememberMe: formData.rememberMe,
             });
 
             // Backend trả về ApiResponse<AuthResponse>
@@ -44,10 +44,13 @@ export default function Login() {
             if (authData?.token) {
                 const storage = formData.rememberMe ? localStorage : sessionStorage;
 
-                // 1. Lưu Token để các request sau tự đính kèm Bearer Token
+                // 1. Lưu Access Token và Refresh Token
                 storage.setItem('token', authData.token);
+                if (authData.refreshToken) {
+                    storage.setItem('refreshToken', authData.refreshToken);
+                }
 
-                // 2. Lưu thông tin User (userId, fullName, role...)
+                // 2. Lưu thông tin User
                 const userInfo = {
                     userId: authData.userId,
                     username: authData.username,
@@ -56,14 +59,14 @@ export default function Login() {
                 };
                 storage.setItem('user', JSON.stringify(userInfo));
 
-                navigate('/');
+                toast.success('Đăng nhập thành công!');
+                navigate('/user/journal');
             } else {
-                setErrorMessage('Không nhận được mã xác thực từ máy chủ.');
+                toast.error('Không nhận được mã xác thực từ máy chủ.');
             }
         } catch (err) {
             console.error('Login error:', err);
-            // Hứng trực tiếp message từ ErrorCode.UNAUTHENTICATED hoặc USER_NOT_FOUND
-            setErrorMessage(
+            toast.error(
                 err.response?.data?.message || 'Đăng nhập thất bại. Vui lòng thử lại!'
             );
         } finally {
@@ -102,14 +105,7 @@ export default function Login() {
                             Vui lòng đăng nhập để tiếp tục hành trình với chúng tôi nhé!
                         </p>
 
-                        {/* Khung thông báo lỗi */}
-                        {errorMessage && (
-                            <div className="mb-5 p-3.5 rounded-button bg-red-50 border border-red-200 text-red-600 text-sm font-medium">
-                                {errorMessage}
-                            </div>
-                        )}
-
-                        <form className="space-y-4" onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit}>
                             {/* Trường Email / Username */}
                             <Input
                                 id="usernameOrEmail"
@@ -121,33 +117,29 @@ export default function Login() {
                                 required
                             />
 
-                            {/* Trường Password */}
-                            <div>
-                                <label className="block mb-1.5 text-sm font-medium text-text-primary">
-                                    Mật khẩu
-                                </label>
-                                <div className="relative">
-                                    <input
-                                        type={showPassword ? 'text' : 'password'}
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full pl-4 pr-11 py-2.5 bg-surface text-text-primary placeholder-text-muted border border-border rounded-input outline-none transition-colors duration-200 focus:border-primary focus:ring-1 focus:ring-primary"
-                                    />
+                            {/* Trường Password dùng component Input mới */}
+                            <Input
+                                id="password"
+                                name="password"
+                                type={showPassword ? 'text' : 'password'}
+                                label="Mật khẩu"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                                rightElement={
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword((prev) => !prev)}
-                                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-primary transition focus:outline-none"
+                                        className="text-text-muted hover:text-primary transition focus:outline-none"
                                         title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                                     >
                                         {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
                                     </button>
-                                </div>
-                            </div>
+                                }
+                            />
 
                             {/* Remember me & Quên mật khẩu */}
-                            <div className="flex items-center justify-between text-sm pt-1 pb-1">
+                            <div className="flex items-center justify-between text-sm pt-1 pb-4">
                                 <label className="flex items-center gap-2 cursor-pointer select-none text-text-secondary">
                                     <input
                                         type="checkbox"
@@ -170,7 +162,7 @@ export default function Login() {
                                 isLoading={loading}
                                 variant="primary"
                                 size="md"
-                                className="w-full mt-2"
+                                className="w-full"
                             >
                                 Log in
                             </Button>
