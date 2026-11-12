@@ -4,7 +4,6 @@ import com.seminar.mentalhealth.dto.request.MoodRecordCreateRequest;
 import com.seminar.mentalhealth.dto.request.MoodRecordUpdateRequest;
 import com.seminar.mentalhealth.dto.response.ApiResponse;
 import com.seminar.mentalhealth.entity.MoodRecord;
-import com.seminar.mentalhealth.entity.User;
 import com.seminar.mentalhealth.service.MoodRecordService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +33,8 @@ public class MoodRecordController {
     }
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<ApiResponse<List<MoodRecord>>> getRecordByUser(@PathVariable User user){
-        List<MoodRecord> history = moodRecordService.getMoodRecordByUser(user);
+    public ResponseEntity<ApiResponse<List<MoodRecord>>> getRecordByUser(@PathVariable Long userId){
+        List<MoodRecord> history = moodRecordService.getMoodRecordByUser(userId);
         ApiResponse<List<MoodRecord>> apiResponse = ApiResponse.<List<MoodRecord>>builder()
                 .success(true)
                 .result(history)

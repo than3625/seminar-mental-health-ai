@@ -42,8 +42,8 @@ public class MoodRecordService {
                 .orElseThrow(()-> new AppException(ErrorCode.MOOD_RECORD_NOT_FOUND));
     }
 
-    public List<MoodRecord> getMoodRecordByUser(User user){
-        return moodRecordRepository.findByUserOrderByRecordedAtDesc(user);
+    public List<MoodRecord> getMoodRecordByUser(Long userId){
+        return moodRecordRepository.findByUser_UserIdOrderByRecordedAtDesc(userId);
     }
 
     public MoodRecord updateMoodRecord(Long recordId, MoodRecordUpdateRequest request){
