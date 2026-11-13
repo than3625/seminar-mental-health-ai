@@ -65,6 +65,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Token đã hết hạn: chỉ ghi log cảnh báo, TUYỆT ĐỐI không để crash sập server
             // Request sẽ tiếp tục mà không có quyền đăng nhập -> Spring Security tự trả về 401 Unauthorized
             logger.warn("JWT token da het han: " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"message\": \"JWT_EXPIRED\"}");
+            return;
         } catch (Exception e) {
             logger.error("Loi xac thuc JWT: " + e.getMessage());
         }
