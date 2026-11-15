@@ -1,10 +1,12 @@
 package com.seminar.mentalhealth.service;
 
+import com.seminar.mentalhealth.dto.response.ChatMessageResponse;
 import com.seminar.mentalhealth.dto.response.ChatSessionResponse;
 import com.seminar.mentalhealth.entity.ChatSession;
 import com.seminar.mentalhealth.entity.User;
 import com.seminar.mentalhealth.exception.AppException;
 import com.seminar.mentalhealth.exception.ErrorCode;
+import com.seminar.mentalhealth.repository.ChatMessageRepository;
 import com.seminar.mentalhealth.repository.ChatSessionRepository;
 import com.seminar.mentalhealth.repository.UserRepository;
 import lombok.AccessLevel;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class ChatSessionService {
     ChatSessionRepository chatSessionRepository;
     UserRepository userRepository;
+    ChatMessageRepository chatMessageRepository;
 
     public ChatSessionResponse createSession(Long userId){
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -55,11 +58,23 @@ public class ChatSessionService {
             session.setDeleted(true);
         chatSessionRepository.save(session);
     }
-    private ChatSessionResponse mapToResponse(ChatSession session){
+    private ChatSessionResponse mapToResponse(ChatSession session) {
+        List<ChatMessageResponse> messageResponses = chatMessageRepository
+                .findBySession_SessionIdOrderByCreatedAtAsc(session.getSessionId())
+                .stream()
+                .map(m -> ChatMessageResponse.builder()
+                        .messageId(m.getMessageId()) // Đổi thành m.getId() nếu entity dùng field 'id'
+                        .sender(m.getSender())
+                        .content(m.getContent())
+                        .createdAt(m.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
+
         return ChatSessionResponse.builder()
                 .sessionId(session.getSessionId())
                 .startedAt(session.getStartedAt())
                 .updatedAt(session.getUpdatedAt())
+                .messages(messageResponses)
                 .build();
     }
 }

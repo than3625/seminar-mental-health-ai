@@ -16,7 +16,7 @@ const Sidebar = () => {
     const menuItems = [
         { name: 'Dashboard', path: '/user/dashboard', icon: <FiGrid className="w-5 h-5" /> },
         { name: 'Journaling', path: '/user/journal', icon: <FiBook className="w-5 h-5" /> },
-        { name: 'AI Chat', path: '/user/chat', icon: <FiMessageCircle className="w-5 h-5" /> },
+        { name: 'AI Chat', path: '/user/ai-chat', icon: <FiMessageCircle className="w-5 h-5" /> },
         { name: 'Wellness Exercises', path: '/user/exercises', icon: <FiWind className="w-5 h-5" /> },
     ];
 

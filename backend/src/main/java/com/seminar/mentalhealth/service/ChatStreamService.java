@@ -71,7 +71,7 @@ public class ChatStreamService {
         long startTime = System.currentTimeMillis();
 
         // Tìm tài liệu
-        log.info("Nhúng câu hỏi và tiìm kiếm tài liệu");
+        log.info("Nhúng câu hỏi và tìm kiếm tài liệu");
         // Lấy câu hỏi của user chuyển thành vector
         Embedding queryEmbedding = embeddingModel.embed(userPrompt).content();
 

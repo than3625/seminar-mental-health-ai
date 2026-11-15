@@ -8,6 +8,7 @@ import PublicLayout from './components/layout/PublicLayout';
 import UserLayout from './components/layout/UserLayout';
 import JournalList from './pages/user/journal/JournalList';
 import JournalEditor from './pages/user/journal/JournalEditor';
+import AIChat from './pages/user/AIChat';
 
 function App() {
     return (
@@ -45,6 +46,7 @@ function App() {
                     <Route path="journal" element={<JournalList />} />
                     <Route path="journal/new" element={<JournalEditor />} />
                     <Route path="journal/:id" element={<JournalEditor />} />
+                    <Route path="ai-chat" element={<AIChat />} />
                 </Route>
             </Routes>
         </div>

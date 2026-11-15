@@ -7,17 +7,18 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/api/chat-sessions")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ChatStreamController {
     ChatStreamService chatStreamService;
 
-    @PostMapping("/sessions/{sessionId}/stream")
+    @PostMapping(value ="/{sessionId}/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamChat(@PathVariable Long sessionId, @Valid @RequestBody ChatStreamRequest request){
         return chatStreamService.streamChatResponse(sessionId, request.getMessage());
     }
