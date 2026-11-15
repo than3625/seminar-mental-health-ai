@@ -4,6 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --color-primary: #829B75;
+    --color-surface-secondary: #EFE7D6;
+
+    --color-mood-happy: #F3D994;
+    --color-mood-calm: #B5C6A8;
+    --color-mood-anxious: #B6C1D5;
+    --color-mood-sad: #C8B8D8;
+    --color-mood-angry: #E5B5A6;
+}
 /* Reset một số css cơ bản cho toàn hệ thống */
 body {
     @apply bg-background;

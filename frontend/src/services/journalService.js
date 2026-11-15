@@ -32,5 +32,8 @@ export const journalService = {
     updateMoodRecord: async (recordId, data) => {
         return await apiClient.put(`/mood-records/${recordId}`, data);
     },
+    getMoodRecordsByUser: async (userId) => {
+        return await apiClient.get(`/mood-records/users/${userId}`);
+    },
 
 };

@@ -56,7 +56,7 @@ export default {
                     happy: '#F3D994',
                     calm: '#B5C6A8',
                     anxious: '#B6C1D5',
-                    sad: '#C5CFD9',
+                    sad: '#C8B8D8',
                     angry: '#E5B5A6',
                 },
             },

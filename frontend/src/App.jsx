@@ -6,6 +6,7 @@ import Register from './pages/public/Register';
 
 import PublicLayout from './components/layout/PublicLayout';
 import UserLayout from './components/layout/UserLayout';
+import UserDashboard from './pages/user/dashboard/Dashboard.jsx';
 import JournalList from './pages/user/journal/JournalList';
 import JournalEditor from './pages/user/journal/JournalEditor';
 import AIChat from './pages/user/AIChat';
@@ -42,7 +43,7 @@ function App() {
 
 
                 <Route path="/user" element={<UserLayout />}>
-
+                    <Route path="dashboard" element={<UserDashboard/>}/>
                     <Route path="journal" element={<JournalList />} />
                     <Route path="journal/new" element={<JournalEditor />} />
                     <Route path="journal/:id" element={<JournalEditor />} />

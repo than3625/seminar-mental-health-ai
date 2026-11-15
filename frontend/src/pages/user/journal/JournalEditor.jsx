@@ -200,8 +200,7 @@ const JournalEditor = () => {
                             onChange={(e) => setIntensity(e.target.value)}
                             className="w-full accent-primary h-2 rounded-lg appearance-none cursor-pointer"
                             style={{
-                                // Tính toán % để tô màu xanh (#829B75) từ trái sang phải, phần còn lại màu nền (#EFE7D6)
-                                background: `linear-gradient(to right, #829B75 ${((intensity - 1) / 9) * 100}%, #EFE7D6 ${((intensity - 1) / 9) * 100}%)`
+                                background: `linear-gradient(to right, var(--color-primary) ${((intensity - 1) / 9) * 100}%, var(--color-surface-secondary) ${((intensity - 1) / 9) * 100}%)`
                             }}
                         />
                     </div>
