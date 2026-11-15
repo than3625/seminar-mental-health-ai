@@ -12,6 +12,10 @@ const apiClient = axios.create({
 // 1. Tự động gắn Token vào mọi request gửi đi
 apiClient.interceptors.request.use(
     (config) => {
+        // Không gửi kèm token cũ khi đang gọi login / register / refresh
+        if (config.url && config.url.includes('/auth/')) {
+            return config;
+        }
         const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
