@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FiPlus, FiSend, FiMessageSquare, FiTrash2, FiSquare } from 'react-icons/fi';
 import { LuSparkles } from 'react-icons/lu';
 import toast from 'react-hot-toast';
-import { chatService } from '../../services/chatService';
+import { chatService } from '../../../services/chatService.js';
 
 const getAuthUser = () => {
     try {
@@ -108,8 +108,10 @@ export default function AIChat() {
         try {
             const created = await chatService.createSession(userId);
             const newId = created?.sessionId;
-            if (!newId) throw new Error('Không lấy được sessionId');
-
+            if (!newId) {
+                toast.error('Không thể tạo phiên trò chuyện mới!');
+                return null;
+            }
             const newSession = {
                 id: newId,
                 title: 'New conversation',
@@ -182,7 +184,9 @@ export default function AIChat() {
                 const created = await chatService.createSession(userId);
                 targetSessionId = created?.sessionId;
                 if (!targetSessionId) {
-                    throw new Error('Không lấy được sessionId');
+                    setIsStreaming(false);
+                    toast.error('Không thể gửi tin nhắn!');
+                    return;
                 }
 
                 const newSession = {
