@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiEye, FiEyeOff } from 'react-icons/fi';
 import toast from 'react-hot-toast';
@@ -103,7 +103,7 @@ export default function Register() {
                             <Input
                                 id="username"
                                 name="username"
-                                label="Username (Để trống sẽ lấy Email)"
+                                label="Username (Nếu để trống thì sẽ lấy Email)"
                                 value={formData.username}
                                 onChange={handleChange}
                                 placeholder="Nhập username của bạn vào đây nhé!"
@@ -224,11 +224,6 @@ export default function Register() {
                                 Đăng nhập
                             </TextLink>
                         </p>
-                    </div>
-
-                    {/* Footer note */}
-                    <div className="text-xs text-text-muted hidden md:block">
-                        © 2026 MindContext. All rights reserved.
                     </div>
                 </div>
 

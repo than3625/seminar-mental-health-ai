@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate} from 'react-router-dom';
 import {
     FiGrid,
     FiBook,
@@ -7,10 +7,13 @@ import {
     FiSettings,
     FiLogOut
 } from 'react-icons/fi';
+import toast from 'react-hot-toast';
+import { authService } from '../../services/authService';
 
 const Sidebar = () => {
     // Lấy đường dẫn hiện tại từ trình duyệt
     const location = useLocation();
+    const navigate = useNavigate();
 
     // Danh sách các menu chính
     const menuItems = [
@@ -19,6 +22,12 @@ const Sidebar = () => {
         { name: 'AI Chat', path: '/user/ai-chat', icon: <FiMessageCircle className="w-5 h-5" /> },
         { name: 'Wellness Exercises', path: '/user/exercises', icon: <FiWind className="w-5 h-5" /> },
     ];
+
+    const handleLogout = async () => {
+        await authService.logout();
+        toast.success('Đã đăng xuất!');
+        navigate('/login', { replace: true });
+    };
 
     return (
         <aside className="w-64 h-full bg-surface-secondary border-r border-border flex flex-col justify-between py-6">
@@ -68,7 +77,11 @@ const Sidebar = () => {
                         <span className="font-medium">Settings</span>
                     </Link>
 
-                    <button className="w-full flex items-center px-4 py-3 rounded-button text-text-secondary hover:bg-surface-hover hover:text-danger transition-colors">
+                    <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="w-full flex items-center px-4 py-3 rounded-button text-text-secondary hover:bg-surface-hover hover:text-danger transition-colors"
+                    >
                         <FiLogOut className="w-5 h-5 mr-3" />
                         <span className="font-medium">Log out</span>
                     </button>

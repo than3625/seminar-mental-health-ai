@@ -176,10 +176,6 @@ export default function Login() {
                             </TextLink>
                         </p>
                     </div>
-
-                    <div className="text-xs text-text-muted hidden md:block">
-                        © 2026 MindContext. All rights reserved.
-                    </div>
                 </div>
 
                 {/* ================= CỘT PHẢI: QUOTE PANEL ================= */}

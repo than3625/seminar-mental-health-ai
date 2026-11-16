@@ -9,7 +9,7 @@ import UserLayout from './components/layout/UserLayout';
 import UserDashboard from './pages/user/dashboard/Dashboard.jsx';
 import JournalList from './pages/user/journal/JournalList';
 import JournalEditor from './pages/user/journal/JournalEditor';
-import AIChat from './pages/user/AIChat';
+import AIChat from './pages/user/chat/AIChat.jsx';
 
 function App() {
     return (

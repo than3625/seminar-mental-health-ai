@@ -18,6 +18,7 @@ const Input = forwardRef(({
                     className="block mb-1.5 text-sm font-medium text-text-primary"
                 >
                     {label}
+                    {props.required && <span className="text-danger ml-1">*</span>}
                 </label>
             )}
 
