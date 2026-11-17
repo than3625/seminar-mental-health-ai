@@ -38,8 +38,12 @@ public class AuthService {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
 
-        if (request.getDateOfBirth().isAfter(LocalDate.now())){
+        if (request.getDateOfBirth()!=null && request.getDateOfBirth().isAfter(LocalDate.now())){
             throw new AppException(ErrorCode.DATE_OF_BIRTH_IN_FUTURE);
+        }
+
+        if (request.getPassword() == null || request.getPassword().trim().length() < 6) {
+            throw new AppException(ErrorCode.PASSWORD_TOO_SHORT);
         }
 
         User user = User.builder()

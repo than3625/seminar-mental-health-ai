@@ -20,9 +20,8 @@ public enum ErrorCode {
     EMAIL_EXISTED(" EMAIL_EXISTED", "Email này đã được sử dụng", HttpStatus.BAD_REQUEST),
     CHAT_SESSION_NOT_FOUND("CHAT_SESSION_NOT_FOUND", "Không tìm thấy phiên trò chuyện T.T", HttpStatus.NOT_FOUND),
     DATE_OF_BIRTH_IN_FUTURE("DATE_OF_BIRTH_IN_FUTURE", "Ngày sinh không được lớn hơn ngày hiện tại", HttpStatus.BAD_REQUEST),
-    INVALID_PASSWORD("INVALID_PASSWORD", "Mật khẩu không chính xác", HttpStatus.BAD_REQUEST);
-
-
+    INVALID_PASSWORD("INVALID_PASSWORD", "Mật khẩu không chính xác", HttpStatus.BAD_REQUEST),
+    PASSWORD_TOO_SHORT("PASSWORD_TOO_SHORT", "Mật khẩu phải có ít nhất 6 ký tự", HttpStatus.BAD_REQUEST);
 
     String code;
     String message;

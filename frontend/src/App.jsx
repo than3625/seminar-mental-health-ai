@@ -3,7 +3,7 @@ import { Toaster } from 'react-hot-toast';
 // Import các pages vào đây:
 import Login from './pages/public/Login';
 import Register from './pages/public/Register';
-
+import AdminLayout from './components/layout/AdminLayout';
 import PublicLayout from './components/layout/PublicLayout';
 import UserLayout from './components/layout/UserLayout';
 import UserDashboard from './pages/user/dashboard/Dashboard.jsx';
@@ -42,7 +42,6 @@ function App() {
                     <Route path="/register" element={<Register />} />
                 </Route>
 
-
                 <Route path="/user" element={<UserLayout />}>
                     <Route path="dashboard" element={<UserDashboard/>}/>
                     <Route path="journal" element={<JournalList />} />
@@ -50,6 +49,13 @@ function App() {
                     <Route path="journal/:id" element={<JournalEditor />} />
                     <Route path="ai-chat" element={<AIChat />} />
                     <Route path="settings" element={<Settings />} />
+                </Route>
+
+                <Route path="/admin" element={<AdminLayout />}>
+                    <Route path="dashboard" element={<div>Admin Dashboard</div>} />
+                    <Route path="users" element={<div>User Management</div>} />
+                    <Route path="knowledge-base" element={<div>Knowledge Base</div>} />
+                    <Route path="reports" element={<div>Reports</div>} />
                 </Route>
             </Routes>
         </div>

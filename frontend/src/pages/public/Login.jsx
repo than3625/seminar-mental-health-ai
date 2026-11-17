@@ -65,7 +65,12 @@ export default function Login() {
                 applyThemeToDOM(userSavedTheme);
 
                 toast.success('Đăng nhập thành công!');
-                navigate('/user/journal');
+                const role = authData.role?.toUpperCase();
+                if (role === 'ROLE_ADMIN' || role === 'ADMIN') {
+                    navigate('/admin', { replace: true });
+                } else {
+                    navigate('/user/journal', { replace: true });
+                }
             } else {
                 toast.error('Không nhận được mã xác thực từ máy chủ.');
             }
