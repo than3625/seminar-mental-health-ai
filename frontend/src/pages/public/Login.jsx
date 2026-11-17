@@ -6,6 +6,7 @@ import api from '../../services/api';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import TextLink from '../../components/ui/TextLink';
+import { getUserTheme, applyThemeToDOM } from '../../utils/themeManager.js';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -58,6 +59,10 @@ export default function Login() {
                     role: authData.role,
                 };
                 storage.setItem('user', JSON.stringify(userInfo));
+
+                // Khôi phục giao diện
+                const userSavedTheme = getUserTheme(userInfo.userId);
+                applyThemeToDOM(userSavedTheme);
 
                 toast.success('Đăng nhập thành công!');
                 navigate('/user/journal');

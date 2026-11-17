@@ -5,14 +5,79 @@
 @tailwind utilities;
 
 :root {
+    /*Brand colors*/
     --color-primary: #829B75;
-    --color-surface-secondary: #EFE7D6;
+    --color-primary-light: #A9B99C;
+    --color-primary-dark: #657D5B;
+    --color-primary-disabled: #D5DDCF;
 
+    --color-secondary: #D9C69A;
+    --color-accent: #EBCBB8;
+
+    /*Background & surface*/
+    --color-background: #F6F1E7;
+    --color-surface: #FFFCF6;
+    --color-surface-secondary: #EFE7D6;
+    --color-surface-hover: #F5EEDB;
+
+    /*Text colors*/
+    --color-text-primary: #3D352B;
+    --color-text-secondary: #82786B;
+    --color-text-muted: #A69B8B;
+    --color-text-inverse: #FFFCF6;
+
+    /*Border*/
+    --color-border: #E5D9C5;
+    --color-border-strong: #D8CCB8;
+
+    /*Moods*/
     --color-mood-happy: #F3D994;
     --color-mood-calm: #B5C6A8;
     --color-mood-anxious: #B6C1D5;
     --color-mood-sad: #C8B8D8;
     --color-mood-angry: #E5B5A6;
+
+    /*Shadow*/
+    --shadow-card: 0 2px 5px rgba(61, 53, 43, 0.10);
+    --shadow-soft: 0 4px 12px rgba(61, 53, 43, 0.06);
+    --shadow-elevated: 0 8px 24px rgba(61, 53, 43, 0.12);
+}
+.dark {
+    /* Brand colors*/
+    --color-primary: #93AD84;
+    --color-primary-light: #B2C7A5;
+    --color-primary-dark: #7A946C;
+    --color-primary-disabled: #3D4538;
+    --color-secondary: #C4B186;
+    --color-accent: #C87968;
+
+    /* Background & Surface */
+    --color-background: #1C1B18;
+    --color-surface: #252420;
+    --color-surface-secondary: #2F2E29;
+    --color-surface-hover: #383630;
+
+    /* Text */
+    --color-text-primary: #F2EFE9;
+    --color-text-secondary: #B5AEA2;
+    --color-text-muted: #847E73;
+    --color-text-inverse: #1C1B18;
+
+    /* Border */
+    --color-border: #3B3932;
+    --color-border-strong: #4D4A41;
+
+    /* Moods*/
+    --color-mood-happy: #F3D994;
+    --color-mood-calm: #B5C6A8;
+    --color-mood-anxious: #B6C1D5;
+    --color-mood-sad: #C8B8D8;
+    --color-mood-angry: #E5B5A6;
+
+    /* Shadow*/
+    --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.35);
+    --shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.25);
+    --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 /* Reset một số css cơ bản cho toàn hệ thống */
 body {

@@ -1,6 +1,8 @@
 
 /** @type {import('tailwindcss').Config} */
 export default {
+    // Kích hoạt giao diện tối
+    darkMode: 'class',
     // Khai báo những file được phép sử dụng class Tailwind
     content: [
         "./index.html",
@@ -13,36 +15,36 @@ export default {
             // 1. BRAND COLORS
             colors: {
                 primary: {
-                    DEFAULT: '#829B75',
-                    light: '#A9B99C',
-                    dark: '#657D5B',
-                    disabled: '#D5DDCF',
+                    DEFAULT: 'var(--color-primary)',
+                    light: 'var(--color-primary-light)',
+                    dark: 'var(--color-primary-dark)',
+                    disabled: 'var(--color-primary-disabled)',
                 },
 
-                secondary: '#D9C69A',
-                accent: '#EBCBB8',
+                secondary: 'var(--color-secondary)',
+                accent: 'var(--color-accent)',
 
                 // 2. BACKGROUND & SURFACE
-                background: '#F6F1E7',
+                background: 'var(--color-background)',
 
                 surface: {
-                    DEFAULT: '#FFFCF6',
-                    secondary: '#EFE7D6',
-                    hover: '#F5EEDB',
+                    DEFAULT: 'var(--color-surface)',
+                    secondary: 'var(--color-surface-secondary)',
+                    hover: 'var(--color-surface-hover)',
                 },
 
                 // 3. TEXT COLORS
                 text: {
-                    primary: '#3D352B',
-                    secondary: '#82786B',
-                    muted: '#A69B8B',
-                    inverse: '#FFFCF6',
+                    primary: 'var(--color-text-primary)',
+                    secondary: 'var(--color-text-secondary)',
+                    muted: 'var(--color-text-muted)',
+                    inverse: 'var(--color-text-inverse)',
                 },
 
                 // 4. BORDER COLORS
                 border: {
-                    DEFAULT: '#E5D9C5',
-                    strong: '#D8CCB8',
+                    DEFAULT: 'var(--color-border)',
+                    strong: 'var(--color-border-strong)',
                 },
 
                 // 5. SEMANTIC COLORS
@@ -53,11 +55,11 @@ export default {
 
                 // 6. MOOD COLORS
                 mood: {
-                    happy: '#F3D994',
-                    calm: '#B5C6A8',
-                    anxious: '#B6C1D5',
-                    sad: '#C8B8D8',
-                    angry: '#E5B5A6',
+                    happy: 'var(--color-mood-happy)',
+                    calm: 'var(--color-mood-calm)',
+                    anxious: 'var(--color-mood-anxious)',
+                    sad: 'var(--color-mood-sad)',
+                    angry: 'var(--color-mood-angry)',
                 },
             },
 
@@ -76,9 +78,9 @@ export default {
 
             // 9. BOX SHADOW
             boxShadow: {
-                card: '0 2px 5px rgba(61, 53, 43, 0.10)',
-                soft: '0 4px 12px rgba(61, 53, 43, 0.06)',
-                elevated: '0 8px 24px rgba(61, 53, 43, 0.12)',
+                card: 'var(--shadow-card)',
+                soft: 'var(--shadow-soft)',
+                elevated: 'var(--shadow-elevated)',
             },
         },
     },

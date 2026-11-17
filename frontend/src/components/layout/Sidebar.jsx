@@ -9,6 +9,7 @@ import {
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { authService } from '../../services/authService';
+import { resetToDefaultTheme } from '../../utils/themeManager.js';
 
 const Sidebar = () => {
     // Lấy đường dẫn hiện tại từ trình duyệt
@@ -25,6 +26,7 @@ const Sidebar = () => {
 
     const handleLogout = async () => {
         await authService.logout();
+        resetToDefaultTheme();
         toast.success('Đã đăng xuất!');
         navigate('/login', { replace: true });
     };

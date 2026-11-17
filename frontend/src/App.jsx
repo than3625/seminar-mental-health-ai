@@ -10,6 +10,7 @@ import UserDashboard from './pages/user/dashboard/Dashboard.jsx';
 import JournalList from './pages/user/journal/JournalList';
 import JournalEditor from './pages/user/journal/JournalEditor';
 import AIChat from './pages/user/chat/AIChat.jsx';
+import Settings from './pages/user/settings/Settings.jsx'
 
 function App() {
     return (
@@ -48,6 +49,7 @@ function App() {
                     <Route path="journal/new" element={<JournalEditor />} />
                     <Route path="journal/:id" element={<JournalEditor />} />
                     <Route path="ai-chat" element={<AIChat />} />
+                    <Route path="settings" element={<Settings />} />
                 </Route>
             </Routes>
         </div>
