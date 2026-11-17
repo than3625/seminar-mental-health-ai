@@ -310,7 +310,7 @@ export default function AIChat() {
                                         onClick={() => handleSelectSession(session.id)}
                                         className={`group w-full text-left p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-2 ${
                                             isActive
-                                                ? 'bg-[#EAE4D3] border-[#C8BFA8] shadow-sm'
+                                                ? 'bg-surface-secondary border-border-strong shadow-sm'
                                                 : 'bg-surface border-border hover:bg-surface-hover'
                                         }`}
                                     >
@@ -364,7 +364,7 @@ export default function AIChat() {
                                                 {msg.content}
                                             </div>
                                         ) : (
-                                            <div className="max-w-[80%] p-5 bg-[#EDE8DC] text-text-primary rounded-2xl rounded-bl-sm">
+                                            <div className="max-w-[80%] p-5 bg-surface-secondary text-text-primary rounded-2xl rounded-bl-sm">
                                                 <div className="flex items-center gap-1.5 text-xs font-medium text-text-secondary mb-2">
                                                     <LuSparkles className="w-3.5 h-3.5 text-primary" />
                                                     <span>MindContext</span>
