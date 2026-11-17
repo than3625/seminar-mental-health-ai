@@ -247,85 +247,180 @@ const Dashboard = () => {
             {/* Header Lời chào */}
             <div className="mb-8 mt-4">
                 <h1 className="font-heading text-4xl font-bold text-text-primary mb-2">
-                    {getGreeting()}, {user.fullName.split(' ')[0] || 'bạn'}.
+                    {getGreeting()}, {user.fullName.split(' ').pop() || 'bạn'}.
                 </h1>
                 <p className="text-text-secondary text-lg">
                     Hãy dành một chút thời gian để lắng nghe bản thân hôm nay nhé.
                 </p>
             </div>
 
-            {/* Thẻ Check-in Cảm xúc */}
-            <div className="bg-surface rounded-card p-6 md:p-8 border border-border shadow-soft mb-6">
-                <h2 className="font-heading text-xl font-bold text-text-primary mb-5">Hôm nay bạn cảm thấy thế nào?</h2>
+            <div className="bg-surface rounded-card p-6 md:p-8 border border-border shadow-soft mb-8">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
 
-                <div className="flex flex-wrap gap-4 mb-8">
-                    {MOOD_OPTIONS.map((mood) => (
-                        <button
-                            key={mood.id}
-                            onClick={() => setSelectedMood(mood.id)}
-                            className={`flex flex-col items-center justify-center w-20 h-24 rounded-2xl border transition-all ${
-                                selectedMood === mood.id
-                                    ? `${mood.color} border-transparent shadow-sm ring-2 ring-offset-2 ring-primary/40`
-                                    : 'bg-surface-secondary border-transparent text-text-secondary hover:bg-surface-hover hover:border-border'
-                            }`}
+                    {/* CỘT TRÁI (7/12): Check-in cảm xúc */}
+                    <div className="lg:col-span-7">
+                        <h2 className="font-heading text-xl font-bold text-text-primary mb-5">
+                            Hôm nay bạn cảm thấy thế nào?
+                        </h2>
+
+                        <div className="flex flex-wrap gap-3 sm:gap-4 mb-7">
+                            {MOOD_OPTIONS.map((mood) => (
+                                <button
+                                    key={mood.id}
+                                    onClick={() => setSelectedMood(mood.id)}
+                                    className={`flex flex-col items-center justify-center w-18 sm:w-20 h-22 sm:h-24 rounded-2xl border transition-all ${
+                                        selectedMood === mood.id
+                                            ? `${mood.color} border-transparent shadow-sm ring-2 ring-offset-2 ring-primary/40`
+                                            : 'bg-surface-secondary border-transparent text-text-secondary hover:bg-surface-hover hover:border-border'
+                                    }`}
+                                >
+                                    <span className="text-3xl mb-1">{mood.emoji}</span>
+                                    <span className={`text-sm ${selectedMood === mood.id ? 'font-medium text-text-primary' : ''}`}>
+                            {mood.label}
+                        </span>
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="max-w-md mb-6">
+                            <div className="flex justify-between items-center mb-3">
+                                <span className="text-text-primary font-medium">Mức độ cảm xúc</span>
+                                <span className="text-text-secondary text-sm">{intensity} / 10</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="1"
+                                max="10"
+                                value={intensity}
+                                onChange={(e) => setIntensity(e.target.value)}
+                                className="w-full accent-primary h-2 rounded-lg appearance-none cursor-pointer"
+                                style={{
+                                    background: `linear-gradient(to right, var(--color-primary) ${((intensity - 1) / 9) * 100}%, var(--color-surface-secondary) ${((intensity - 1) / 9) * 100}%)`
+                                }}
+                            />
+                        </div>
+
+                        <Button
+                            variant="primary"
+                            onClick={handleSaveMood}
+                            isLoading={isSavingMood}
+                            disabled={!selectedMood}
                         >
-                            <span className="text-3xl mb-1">{mood.emoji}</span>
-                            <span className={`text-sm ${selectedMood === mood.id ? 'font-medium text-text-primary' : ''}`}>
-                                {mood.label}
-                            </span>
-                        </button>
-                    ))}
-                </div>
-
-                <div className="max-w-md mb-6">
-                    <div className="flex justify-between items-center mb-3">
-                        <span className="text-text-primary font-medium">Mức độ cảm xúc</span>
-                        <span className="text-text-secondary text-sm">{intensity} / 10</span>
+                            Lưu cảm xúc
+                        </Button>
                     </div>
-                    <input
-                        type="range"
-                        min="1" max="10"
-                        value={intensity}
-                        onChange={(e) => setIntensity(e.target.value)}
-                        className="w-full accent-primary h-2 rounded-lg appearance-none cursor-pointer"
-                        style={{
-                            background: `linear-gradient(to right, var(--color-primary) ${((intensity - 1) / 9) * 100}%, var(--color-surface-secondary) ${((intensity - 1) / 9) * 100}%)`
-                        }}
-                    />
-                </div>
 
-                <Button
-                    variant="primary"
-                    onClick={handleSaveMood}
-                    isLoading={isSavingMood}
-                    disabled={!selectedMood}
-                >
-                    Lưu cảm xúc
-                </Button>
+                    <div className="lg:col-span-5 lg:border-l lg:border-border/80 lg:pl-8 flex flex-col justify-center gap-4">
+                        <Link
+                            to="/user/journal/new"
+                            className="bg-surface-secondary/60 hover:bg-surface-hover rounded-2xl p-5 border border-border/70 hover:border-primary/40 transition-all flex items-center group"
+                        >
+                            <div className="w-12 h-12 rounded-xl bg-surface flex items-center justify-center text-primary border border-border shrink-0 mr-4 group-hover:scale-105 transition-transform shadow-2xs">
+                                <FiBook className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h3 className="font-heading font-bold text-base text-text-primary mb-0.5">
+                                    Viết bài nhật ký mới
+                                </h3>
+                                <p className="text-text-secondary text-xs leading-relaxed">
+                                    Ghi lại những gì đang diễn ra trong tâm trí
+                                </p>
+                            </div>
+                        </Link>
+
+                        <Link
+                            to="/user/ai-chat"
+                            className="bg-surface-secondary/60 hover:bg-surface-hover rounded-2xl p-5 border border-border/70 hover:border-[#C87968]/40 transition-all flex items-center group"
+                        >
+                            <div className="w-12 h-12 rounded-xl bg-[#EBCBB8]/35 flex items-center justify-center text-[#C87968] border border-[#EBCBB8] shrink-0 mr-4 group-hover:scale-105 transition-transform shadow-2xs">
+                                <FiMessageCircle className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h3 className="font-heading font-bold text-base text-text-primary mb-0.5">
+                                    Trò chuyện với AI
+                                </h3>
+                                <p className="text-text-secondary text-xs leading-relaxed">
+                                    Tâm sự mọi điều một cách nhẹ nhàng
+                                </p>
+                            </div>
+                        </Link>
+                    </div>
+
+                </div>
             </div>
 
-            {/* Các nút Hành động Nhanh  */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <Link to="/user/journal/new" className="bg-surface rounded-card p-6 border border-border shadow-soft hover:shadow-card transition-shadow flex items-center group">
-                    <div className="w-14 h-14 rounded-2xl bg-surface-secondary flex items-center justify-center text-primary border border-border mr-4 group-hover:scale-105 transition-transform">
-                        <FiBook className="w-6 h-6" />
-                    </div>
-                    <div>
-                        <h3 className="font-heading font-bold text-lg text-text-primary mb-1">Viết bài nhật ký mới</h3>
-                        <p className="text-text-secondary text-sm">Ghi lại những gì đang diễn ra trong tâm trí</p>
-                    </div>
-                </Link>
+            {/* Thẻ Check-in Cảm xúc */}
+            {/*<div className="bg-surface rounded-card p-6 md:p-8 border border-border shadow-soft mb-6">*/}
+            {/*    <h2 className="font-heading text-xl font-bold text-text-primary mb-5">Hôm nay bạn cảm thấy thế nào?</h2>*/}
 
-                <Link to="/user/ai-chat" className="bg-surface rounded-card p-6 border border-border shadow-soft hover:shadow-card transition-shadow flex items-center group">
-                    <div className="w-14 h-14 rounded-2xl bg-[#EBCBB8]/30 flex items-center justify-center text-[#C87968] border border-[#EBCBB8] mr-4 group-hover:scale-105 transition-transform">
-                        <FiMessageCircle className="w-6 h-6" />
-                    </div>
-                    <div>
-                        <h3 className="font-heading font-bold text-lg text-text-primary mb-1">Trò chuyện với AI</h3>
-                        <p className="text-text-secondary text-sm">Tâm sự mọi điều một cách nhẹ nhàng</p>
-                    </div>
-                </Link>
-            </div>
+            {/*    <div className="flex flex-wrap gap-4 mb-8">*/}
+            {/*        {MOOD_OPTIONS.map((mood) => (*/}
+            {/*            <button*/}
+            {/*                key={mood.id}*/}
+            {/*                onClick={() => setSelectedMood(mood.id)}*/}
+            {/*                className={`flex flex-col items-center justify-center w-20 h-24 rounded-2xl border transition-all ${*/}
+            {/*                    selectedMood === mood.id*/}
+            {/*                        ? `${mood.color} border-transparent shadow-sm ring-2 ring-offset-2 ring-primary/40`*/}
+            {/*                        : 'bg-surface-secondary border-transparent text-text-secondary hover:bg-surface-hover hover:border-border'*/}
+            {/*                }`}*/}
+            {/*            >*/}
+            {/*                <span className="text-3xl mb-1">{mood.emoji}</span>*/}
+            {/*                <span className={`text-sm ${selectedMood === mood.id ? 'font-medium text-text-primary' : ''}`}>*/}
+            {/*                    {mood.label}*/}
+            {/*                </span>*/}
+            {/*            </button>*/}
+            {/*        ))}*/}
+            {/*    </div>*/}
+
+            {/*    <div className="max-w-md mb-6">*/}
+            {/*        <div className="flex justify-between items-center mb-3">*/}
+            {/*            <span className="text-text-primary font-medium">Mức độ cảm xúc</span>*/}
+            {/*            <span className="text-text-secondary text-sm">{intensity} / 10</span>*/}
+            {/*        </div>*/}
+            {/*        <input*/}
+            {/*            type="range"*/}
+            {/*            min="1" max="10"*/}
+            {/*            value={intensity}*/}
+            {/*            onChange={(e) => setIntensity(e.target.value)}*/}
+            {/*            className="w-full accent-primary h-2 rounded-lg appearance-none cursor-pointer"*/}
+            {/*            style={{*/}
+            {/*                background: `linear-gradient(to right, var(--color-primary) ${((intensity - 1) / 9) * 100}%, var(--color-surface-secondary) ${((intensity - 1) / 9) * 100}%)`*/}
+            {/*            }}*/}
+            {/*        />*/}
+            {/*    </div>*/}
+
+            {/*    <Button*/}
+            {/*        variant="primary"*/}
+            {/*        onClick={handleSaveMood}*/}
+            {/*        isLoading={isSavingMood}*/}
+            {/*        disabled={!selectedMood}*/}
+            {/*    >*/}
+            {/*        Lưu cảm xúc*/}
+            {/*    </Button>*/}
+            {/*</div>*/}
+
+            {/*/!* Các nút Hành động Nhanh  *!/*/}
+            {/*<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">*/}
+            {/*    <Link to="/user/journal/new" className="bg-surface rounded-card p-6 border border-border shadow-soft hover:shadow-card transition-shadow flex items-center group">*/}
+            {/*        <div className="w-14 h-14 rounded-2xl bg-surface-secondary flex items-center justify-center text-primary border border-border mr-4 group-hover:scale-105 transition-transform">*/}
+            {/*            <FiBook className="w-6 h-6" />*/}
+            {/*        </div>*/}
+            {/*        <div>*/}
+            {/*            <h3 className="font-heading font-bold text-lg text-text-primary mb-1">Viết bài nhật ký mới</h3>*/}
+            {/*            <p className="text-text-secondary text-sm">Ghi lại những gì đang diễn ra trong tâm trí</p>*/}
+            {/*        </div>*/}
+            {/*    </Link>*/}
+
+            {/*    <Link to="/user/ai-chat" className="bg-surface rounded-card p-6 border border-border shadow-soft hover:shadow-card transition-shadow flex items-center group">*/}
+            {/*        <div className="w-14 h-14 rounded-2xl bg-[#EBCBB8]/30 flex items-center justify-center text-[#C87968] border border-[#EBCBB8] mr-4 group-hover:scale-105 transition-transform">*/}
+            {/*            <FiMessageCircle className="w-6 h-6" />*/}
+            {/*        </div>*/}
+            {/*        <div>*/}
+            {/*            <h3 className="font-heading font-bold text-lg text-text-primary mb-1">Trò chuyện với AI</h3>*/}
+            {/*            <p className="text-text-secondary text-sm">Tâm sự mọi điều một cách nhẹ nhàng</p>*/}
+            {/*        </div>*/}
+            {/*    </Link>*/}
+            {/*</div>*/}
             {/* Bieu do 1: weekly mood trends */}
             <div className="bg-surface rounded-card p-6 md:p-8 border border-border shadow-soft mb-8">
                 <div className="flex justify-between items-center mb-6">
