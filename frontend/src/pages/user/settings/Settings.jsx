@@ -20,6 +20,7 @@ const Settings = () => {
 
     // 1. State Thông tin cá nhân
     const [profile, setProfile] = useState({
+        username: '',
         fullName: '',
         email: '',
         gender: '',
@@ -59,6 +60,7 @@ const Settings = () => {
                 const data = res?.result || res?.data || res;
 
                 setProfile({
+                    username: data.username || '',
                     fullName: data.fullName || '',
                     email: data.email || '',
                     gender: data.gender || '',
@@ -99,6 +101,7 @@ const Settings = () => {
         setIsSavingProfile(true);
         try {
             const payload = {
+                username: profile.username.trim(),
                 fullName: profile.fullName.trim(),
                 email: profile.email.trim(),
                 gender: profile.gender || null,
@@ -106,15 +109,23 @@ const Settings = () => {
             };
 
             const res = await userService.updateProfile(userId, payload);
-            const updatedData = res?.result || res?.data;
+            const updatedData = res?.result || res?.data || res;
 
             // Cập nhật lại fullName trong storage để Dashboard hiển thị tên mới ngay lập tức
             const storage = localStorage.getItem('user') ? localStorage : sessionStorage;
             const storedUser = JSON.parse(storage.getItem('user') || '{}');
             storage.setItem('user', JSON.stringify({
                 ...storedUser,
+                username: updatedData?.username || payload.username,
                 fullName: updatedData?.fullName || payload.fullName,
             }));
+
+            if (updatedData?.token) {
+                storage.setItem('token', updatedData.token);
+            }
+            if (updatedData?.refreshToken) {
+                storage.setItem('refreshToken', updatedData.refreshToken);
+            }
 
             toast.success('Cập nhật hồ sơ thành công!');
         } catch (error) {
@@ -201,7 +212,7 @@ const Settings = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 mb-4">
                         <Input
                             id="fullName"
-                            label="Tên hiển thị"
+                            label="Họ và tên"
                             placeholder="Nhập họ và tên"
                             value={profile.fullName}
                             error={profileErrors.fullName}
@@ -218,6 +229,14 @@ const Settings = () => {
                             error={profileErrors.email}
                             onChange={(e) => setProfile({ ...profile, email: e.target.value })}
                             required
+                        />
+
+                        <Input
+                            id="username"
+                            label="Tên đăng nhập"
+                            placeholder="Nhập username (Nếu để trống sẽ lấy email)"
+                            value={profile.username}
+                            onChange={(e) => setProfile({ ...profile, username: e.target.value })}
                         />
 
                         <div className="w-full mb-4">
