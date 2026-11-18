@@ -22,4 +22,7 @@ public class UserResponse {
     String role;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+
+    String token;
+    String refreshToken;
 }

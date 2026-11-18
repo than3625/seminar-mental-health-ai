@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateUserProfileRequest {
+    String username;
     String fullName;
     String email;
     LocalDate dateOfBirth;
