@@ -73,6 +73,8 @@ public class AuthService {
                             request.getPassword()
                     )
             );
+        } catch (org.springframework.security.authentication.DisabledException e){
+            throw new AppException(ErrorCode.ACCOUNT_LOCKED);
         } catch (Exception e){
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }

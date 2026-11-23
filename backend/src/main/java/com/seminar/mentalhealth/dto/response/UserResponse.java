@@ -20,6 +20,7 @@ public class UserResponse {
     String gender;
     LocalDate dateOfBirth;
     String role;
+    Boolean active;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 

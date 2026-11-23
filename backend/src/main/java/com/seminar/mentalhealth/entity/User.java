@@ -52,6 +52,9 @@ public class User {
         ROLE_ADMIN
     }
 
+    @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")
+    Boolean active = true;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     LocalDateTime createdAt;
