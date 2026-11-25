@@ -67,7 +67,7 @@ export default function Login() {
                 toast.success('Đăng nhập thành công!');
                 const role = authData.role?.toUpperCase();
                 if (role === 'ROLE_ADMIN' || role === 'ADMIN') {
-                    navigate('/admin', { replace: true });
+                    navigate('/admin/dashboard', { replace: true });
                 } else {
                     navigate('/user/journal', { replace: true });
                 }
