@@ -2,10 +2,7 @@ package com.seminar.mentalhealth.service;
 
 import com.seminar.mentalhealth.dto.response.AdminDashboardResponse;
 import com.seminar.mentalhealth.dto.response.UserResponse;
-import com.seminar.mentalhealth.entity.ChatSession;
-import com.seminar.mentalhealth.entity.Journal;
-import com.seminar.mentalhealth.entity.MoodRecord;
-import com.seminar.mentalhealth.entity.User;
+import com.seminar.mentalhealth.entity.*;
 import com.seminar.mentalhealth.exception.AppException;
 import com.seminar.mentalhealth.exception.ErrorCode;
 import com.seminar.mentalhealth.repository.*;
@@ -38,18 +35,19 @@ public class AdminService {
 
     public List<UserResponse> getAllUsers(){
         return userRepository.findAll().stream()
+                .filter(user -> user.getRole() == User.Role.ROLE_USER)
                 .map(this::mapToUserResponse)
                 .toList();
     }
 
     public UserResponse getUserById(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = findNormalUserOrThrow(userId);
         return mapToUserResponse(user);
     }
 
     @Transactional
     public UserResponse updateUserStatus(Long userId, Boolean active){
-        User targetUser = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User targetUser = findNormalUserOrThrow(userId);
         preventSelfAction(targetUser);
         boolean newStatus = (active != null) ? active : !Boolean.TRUE.equals(targetUser.getActive());
         targetUser.setActive(newStatus);
@@ -59,10 +57,43 @@ public class AdminService {
 
     @Transactional
     public void deleteUser(Long userId){
-        User targetUser = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User targetUser = findNormalUserOrThrow(userId);
         preventSelfAction(targetUser);
 
+        // Xóa chatmessage, chatsession
+        List<ChatSession> sessions = chatSessionRepository.findAll().stream()
+                .filter(s -> s.getUser() != null && s.getUser().getUserId().equals(userId))
+                .toList();
+        if (!sessions.isEmpty()) {
+            List<Long> sessionIds = sessions.stream().map(ChatSession::getSessionId).toList();
+            List<ChatMessage> messages = chatMessageRepository.findAll().stream()
+                    .filter(m -> m.getSession() != null && sessionIds.contains(m.getSession().getSessionId()))
+                    .toList();
+            chatMessageRepository.deleteAll(messages);
+            chatSessionRepository.deleteAll(sessions);
+        }
+
+        // Xóa Journal, MoodRecord của user
+        List<MoodRecord> moods = moodRecordRepository.findAll().stream()
+                .filter(m -> m.getUser() != null && m.getUser().getUserId().equals(userId))
+                .toList();
+        if (!moods.isEmpty()) {
+            List<Long> moodIds = moods.stream().map(MoodRecord::getRecordId).toList();
+            List<Journal> journals = journalRepository.findAll().stream()
+                    .filter(j -> j.getMoodRecord() != null && moodIds.contains(j.getMoodRecord().getRecordId()))
+                    .toList();
+            journalRepository.deleteAll(journals);
+            moodRecordRepository.deleteAll(moods);
+        }
+
         userRepository.delete(targetUser);
+    }
+    private User findNormalUserOrThrow(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        if (user.getRole() != User.Role.ROLE_USER){
+            throw new AppException(ErrorCode.USER_NOT_FOUND);
+        }
+        return user;
     }
 
     private void preventSelfAction(User targetUser){

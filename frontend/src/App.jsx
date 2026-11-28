@@ -12,6 +12,7 @@ import JournalEditor from './pages/user/journal/JournalEditor';
 import AIChat from './pages/user/chat/AIChat.jsx';
 import Settings from './pages/user/settings/Settings.jsx';
 import AdminDashboard from "./pages/admin/dashboard/AdminDashboard.jsx";
+import UserManagement from "./pages/admin/management/UserManagement.jsx";
 
 function App() {
     return (
@@ -54,7 +55,7 @@ function App() {
 
                 <Route path="/admin" element={<AdminLayout />}>
                     <Route path="dashboard" element={<AdminDashboard/>} />
-                    <Route path="users" element={<div>User Management</div>} />
+                    <Route path="users" element={<UserManagement/>} />
                     <Route path="knowledge-base" element={<div>Knowledge Base</div>} />
                     <Route path="reports" element={<div>Reports</div>} />
                 </Route>
